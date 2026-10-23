@@ -20,9 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
       - name: Pipeline tests (no network)
         working-directory: pipeline
-        run: uv run pytest -m "not network"
+        run: |
+          uv sync --locked
+          uv run --locked pytest -m "not network"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -43,17 +48,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: site/package-lock.json
-      # Fails (and stops the job) if any lesson is unreviewed, any text still
-      # contains TODO, or a map lacks required metadata. Do not add
+      # Fails (and stops the job) if a lesson whose maps are all verified is
+      # unreviewed, a verified map's caveat is unreviewed (caveat_reviewed),
+      # any text still contains TODO, or a map lacks required metadata. Do not add
       # continue-on-error: the build writes its outputs even when it fails.
       - name: Build data (deploy gate)
         working-directory: pipeline
-        run: uv run python -m atlas_pipeline build --deploy --out ../site/public/data
+        run: |
+          uv sync --locked
+          uv run --locked python -m atlas_pipeline build --deploy --out ../site/public/data
       - name: Build site
         working-directory: site
         run: |
