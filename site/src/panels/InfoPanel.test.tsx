@@ -15,6 +15,15 @@ describe('InfoPanel', () => {
     expect(screen.getByText(/148/)).toBeInTheDocument()
   })
 
+  it('shows group, study and decreases-present rows', () => {
+    render(<InfoPanel map={fixtureMap()} />)
+    expect(screen.getByText('Group')).toBeInTheDocument()
+    expect(screen.getByText('emotion')).toBeInTheDocument()
+    expect(screen.getByText('Study')).toBeInTheDocument()
+    expect(screen.getByText('Decreases present')).toBeInTheDocument()
+    expect(screen.getByText('no')).toBeInTheDocument()
+  })
+
   it('shows the no-decreases note only for wager2015', () => {
     const { rerender } = render(<InfoPanel map={fixtureMap()} />)
     expect(screen.getByText('No decreases can appear in this map by method')).toBeInTheDocument()

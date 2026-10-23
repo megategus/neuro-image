@@ -30,7 +30,7 @@ export default function App() {
 
   const profiles = data.profiles.filter((p) => selected.includes(p.map_id))
   const labels = Object.fromEntries(data.maps.map((m) => [m.id, m.label]))
-  const wagerMaps = maps.filter((m) => m.threshold_type === 'display-only')
+  const wagerMaps = maps.filter((m) => m.study_id === 'wager2015')
   const sliderMax = Math.max(0.001, ...wagerMaps.map((m) => m.display_max))
   const effectiveCut = unthresholded ? UNTHRESHOLDED : cut
 
@@ -63,6 +63,8 @@ export default function App() {
           ))}
         </ul>
         <div className="controls">
+          {wagerMaps.length > 0 && (
+            <>
           <label className="slider">
             Display cut: {effectiveCut === null ? 'default' : unthresholded ? 'none' : cut}
             <input
@@ -80,6 +82,8 @@ export default function App() {
             <input type="checkbox" checked={unthresholded} onChange={(e) => setUnthresholded(e.target.checked)} /> show
             unthresholded
           </label>
+            </>
+          )}
           {data.atlasLabels && (
             <label>
               <input type="checkbox" checked={showLabels} onChange={(e) => setShowLabels(e.target.checked)} /> region

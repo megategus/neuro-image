@@ -2,6 +2,8 @@ import type { MapMeta } from '../data/types'
 
 export default function InfoPanel({ map }: { map: MapMeta }) {
   const rows: [string, React.ReactNode][] = [
+    ['Group', map.group],
+    ['Study', map.study_id],
     ['Source', map.citation],
     ['DOI', <a key="doi" href={`https://doi.org/${map.doi}`} target="_blank" rel="noreferrer">{map.doi}</a>],
     ['Studies pooled', String(map.n_studies)],
@@ -11,6 +13,7 @@ export default function InfoPanel({ map }: { map: MapMeta }) {
     ['Threshold type', map.threshold_type],
     ['Threshold value', map.threshold === null ? 'none' : String(map.threshold)],
     ['Display range', `${map.display_min} to ${map.display_max}`],
+    ['Decreases present', map.has_negative ? 'yes' : 'no'],
     ['Licence', map.licence],
     ['Caveat', map.caveat],
   ]
