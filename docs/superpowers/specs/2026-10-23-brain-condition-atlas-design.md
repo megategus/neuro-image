@@ -1,7 +1,7 @@
 # Brain Condition Atlas — Design
 
 Date: 2026-10-23
-Status: draft for approval
+Status: approved 2026-10-23
 
 ## 1. Intent
 
@@ -33,6 +33,21 @@ method supports.
 - G5. Every map carries its citation, DOI, method, what its values mean, the
   threshold and whether that threshold is statistical or display-only,
   licence, and a short plain-language "what this does not show" caveat.
+- G6. **Guided comparisons** (user decision): a short sequence of preset
+  lessons, each loading a fixed set of maps/profiles with 3–6 sentences of
+  explanation and one "notice this" prompt. Students can leave a lesson and
+  explore freely at any point. Claude drafts the text; **the user reviews it
+  medically before publication** (release gate, R3). Draft lesson set:
+  1. Reading a meta-analytic map — what values and thresholds mean (Wager
+     display threshold vs a statistical one).
+  2. Five emotions, one brain — overlap across emotions; no "emotion centre".
+  3. Fear vs anxiety — present vs uncertain threat; shared and distinct
+     network profiles.
+  4. Memory retrieval and the default mode network.
+  5. Fear vs retrieval — neighbouring structures (amygdala, hippocampus),
+     different network profiles.
+  Lesson content is data (`lessons.json`), each claim tied to a cited map;
+  no claim beyond what the cited maps/papers support.
 
 ## 3. Non-goals
 
@@ -205,8 +220,9 @@ completeness (no map without citation/threshold type/licence).
   listed fallback and record why.
 - R2. Licence of NeuroVault collections to be recorded per collection (often
   CC0; verify).
-- R3. Teaching text (caveats, "what this does not show") must be reviewed by
-  the user (medical background) before publishing.
+- R3. Teaching text (caveats, lessons) is drafted by Claude and must be
+  reviewed by the user (medical background) before publishing. Claude's draft
+  is not a medical review.
 
 ## 10. Calls made by Claude (user to check)
 
