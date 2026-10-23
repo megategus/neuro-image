@@ -1,0 +1,25 @@
+[project]
+name = "atlas-pipeline"
+version = "0.1.0"
+description = "Data pipeline for the brain condition atlas"
+requires-python = ">=3.11"
+dependencies = [
+    "nibabel>=5.4.2",
+    "nilearn>=0.14.1",
+    "numpy>=2.4.6",
+    "pyyaml",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["network: needs internet access (deselect with -m \"not network\")"]

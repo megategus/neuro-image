@@ -1,0 +1,127 @@
+# Registry of published maps. Field notes:
+# - threshold: in the map's own value units (the number compared with voxel
+#   values), exactly as the authors state it. A p-value stated for a z- or
+#   t-map must first be converted to that map's units; never choose one.
+# - caveat_reviewed: set to true only after the medical reviewer has approved
+#   this source's caveat text. `build --deploy` fails for a verified source
+#   whose caveat is not reviewed.
+sources:
+  - id: anger
+    label: Anger
+    group: emotion
+    study_id: wager2015
+    url: https://raw.githubusercontent.com/canlab/Neuroimaging_Pattern_Masks/master/CANlab_Meta_analysis_maps/2015_Wager_Kang_etal_Emotion_Meta_BSPP/Wager_Kang_PlosCB_emometa_2015_anger.nii.gz
+    sha256: 925da717c6894ae21bbc22a43f21fd5fa6071236fffa6162420ce519441dd8c4
+    status: verified
+    citation: "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066."
+    doi: 10.1371/journal.pcbi.1004066
+    n_studies: 148
+    method: "Bayesian spatial point process (BSPP) coordinate-based meta-analysis"
+    value_meaning: "posterior expected number of activation centres"
+    threshold: 0.001
+    threshold_type: display-only
+    licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
+    caveat: "Shows where studies of anger tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to anger; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
+  - id: disgust
+    label: Disgust
+    group: emotion
+    study_id: wager2015
+    url: https://raw.githubusercontent.com/canlab/Neuroimaging_Pattern_Masks/master/CANlab_Meta_analysis_maps/2015_Wager_Kang_etal_Emotion_Meta_BSPP/Wager_Kang_PlosCB_emometa_2015_disgust.nii.gz
+    sha256: 06ee1edb6b66c70f436f615bb8284aee200599a1ba7438ed5bda42d31151995c
+    status: verified
+    citation: "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066."
+    doi: 10.1371/journal.pcbi.1004066
+    n_studies: 148
+    method: "Bayesian spatial point process (BSPP) coordinate-based meta-analysis"
+    value_meaning: "posterior expected number of activation centres"
+    threshold: 0.001
+    threshold_type: display-only
+    licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
+    caveat: "Shows where studies of disgust tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to disgust; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
+  - id: fear
+    label: Fear
+    group: emotion
+    study_id: wager2015
+    url: https://raw.githubusercontent.com/canlab/Neuroimaging_Pattern_Masks/master/CANlab_Meta_analysis_maps/2015_Wager_Kang_etal_Emotion_Meta_BSPP/Wager_Kang_PlosCB_emometa_2015_fear.nii.gz
+    sha256: b43d4c59bc4fc8f9b86099a1562acd589854eb72007e75f8da223e1bb5b24419
+    status: verified
+    citation: "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066."
+    doi: 10.1371/journal.pcbi.1004066
+    n_studies: 148
+    method: "Bayesian spatial point process (BSPP) coordinate-based meta-analysis"
+    value_meaning: "posterior expected number of activation centres"
+    threshold: 0.001
+    threshold_type: display-only
+    licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
+    caveat: "Shows where studies of fear tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to fear; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the authors warn that amygdala values for negative emotions may be over-represented because the field has focused on fear."
+    caveat_reviewed: false
+  - id: happiness
+    label: Happiness
+    group: emotion
+    study_id: wager2015
+    url: https://raw.githubusercontent.com/canlab/Neuroimaging_Pattern_Masks/master/CANlab_Meta_analysis_maps/2015_Wager_Kang_etal_Emotion_Meta_BSPP/Wager_Kang_PlosCB_emometa_2015_happy.nii.gz
+    sha256: 7cc760bfc7ff1495e77ad47fce627ae3e448325a1893725e112f242a290f43c9
+    status: verified
+    citation: "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066."
+    doi: 10.1371/journal.pcbi.1004066
+    n_studies: 148
+    method: "Bayesian spatial point process (BSPP) coordinate-based meta-analysis"
+    value_meaning: "posterior expected number of activation centres"
+    threshold: 0.001
+    threshold_type: display-only
+    licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
+    caveat: "Shows where studies of happiness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to happiness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
+  - id: sadness
+    label: Sadness
+    group: emotion
+    study_id: wager2015
+    url: https://raw.githubusercontent.com/canlab/Neuroimaging_Pattern_Masks/master/CANlab_Meta_analysis_maps/2015_Wager_Kang_etal_Emotion_Meta_BSPP/Wager_Kang_PlosCB_emometa_2015_sad.nii.gz
+    sha256: 34e85ece341be606653a190403b8323dd8d49521eff3a146af4062e391995c88
+    status: verified
+    citation: "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066."
+    doi: 10.1371/journal.pcbi.1004066
+    n_studies: 148
+    method: "Bayesian spatial point process (BSPP) coordinate-based meta-analysis"
+    value_meaning: "posterior expected number of activation centres"
+    threshold: 0.001
+    threshold_type: display-only
+    licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
+    caveat: "Shows where studies of sadness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to sadness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases; in-scanner sadness tasks are typically low-arousal, so it may not represent intense grief."
+    caveat_reviewed: false
+  - id: anxiety
+    label: Anxiety
+    group: anxiety
+    study_id: chavanne2021_anxiety
+    url: https://neurovault.org/collections/6012/
+    sha256: null
+    status: unverified
+    citation: "unknown — pending verification"
+    doi: "unknown — pending verification"
+    n_studies: null
+    method: "Pooled induced anxiety, healthy participants (NeuroVault collection 6012). Method unknown — pending verification"
+    value_meaning: "unknown — pending verification"
+    threshold: null
+    threshold_type: none
+    licence: "unknown — pending verification"
+    caveat: "Anxiety is shown as a contrast with fear (sustained apprehension about uncertain threat), not as a basic emotion; this map does not show anxiety disorders or a region specific to anxiety. Its values come from a different method than the emotion maps, so the two cannot be compared colour for colour."
+    caveat_reviewed: false
+  - id: retrieval
+    label: Retrieval
+    group: retrieval
+    study_id: nv12234_retrieval
+    url: https://neurovault.org/collections/12234/
+    sha256: null
+    status: unverified
+    citation: "unknown — pending verification"
+    doi: "unknown — pending verification"
+    n_studies: null
+    method: "NeuroVault collection 12234. Method unknown — pending verification"
+    value_meaning: "unknown — pending verification"
+    threshold: null
+    threshold_type: none
+    licence: "unknown — pending verification"
+    caveat: "Shows where studies of remembering past events reported increases relative to their control tasks; it does not show where memories are stored, and the regions it highlights are not specific to memory. Its method differs from the emotion maps, so compare it with them only through the network profile."
+    caveat_reviewed: false
