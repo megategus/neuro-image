@@ -14,7 +14,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of anger tended to report activation increases, as estimated by a statistical model; the coloured regions are not specific to anger, decreases cannot appear by method, and the 0.001 cut is a display choice, not a significance test."
   - id: disgust
     label: Disgust
     group: emotion
@@ -30,7 +30,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of disgust tended to report activation increases, as estimated by a statistical model; the coloured regions are not specific to disgust, decreases cannot appear by method, and the 0.001 cut is a display choice, not a significance test. Regions that are hard to image, such as the brainstem and ventromedial prefrontal cortex, are probably under-represented."
   - id: fear
     label: Fear
     group: emotion
@@ -46,7 +46,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of fear tended to report activation increases, as estimated by a statistical model; the coloured regions are not specific to fear, decreases cannot appear by method, and the 0.001 cut is a display choice, not a significance test. The authors note that amygdala values for negative emotions may be inflated by the field's long focus on fear."
   - id: happiness
     label: Happiness
     group: emotion
@@ -62,7 +62,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of happiness tended to report activation increases, as estimated by a statistical model; the coloured regions are not specific to happiness, decreases cannot appear by method, and the 0.001 cut is a display choice, not a significance test. It pools varied in-scanner tasks (faces, pictures, films, recall), not happiness as experienced in everyday life."
   - id: sadness
     label: Sadness
     group: emotion
@@ -78,7 +78,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of sadness tended to report activation increases, as estimated by a statistical model; the coloured regions are not specific to sadness, decreases cannot appear by method, and the 0.001 cut is a display choice, not a significance test. In-scanner sadness tasks are typically low-arousal, so the map may not represent intense grief."
   - id: anxiety
     label: Anxiety
     group: anxiety
@@ -94,7 +94,7 @@ sources:
     threshold: null
     threshold_type: none
     licence: "unknown — pending verification"
-    caveat: "TODO-caveat"
+    caveat: "Anxiety is shown as a contrast with fear (sustained apprehension about uncertain threat), not as a basic emotion; this map does not show anxiety disorders or a region specific to anxiety. Its values come from a different method than the emotion maps, so the two cannot be compared colour for colour."
   - id: retrieval
     label: Retrieval
     group: retrieval
@@ -110,4 +110,4 @@ sources:
     threshold: null
     threshold_type: none
     licence: "unknown — pending verification"
-    caveat: "TODO-caveat"
+    caveat: "Shows where studies of remembering past events reported increases relative to their control tasks; it does not show where memories are stored, and the regions it highlights are not specific to memory. Its method differs from the emotion maps, so compare it with them only through the network profile."
