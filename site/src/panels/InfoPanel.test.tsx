@@ -30,4 +30,17 @@ describe('InfoPanel', () => {
     rerender(<InfoPanel map={fixtureMap({ study_id: 'other', id: 'x' })} />)
     expect(screen.queryByText(/No decreases can appear/)).toBeNull()
   })
+
+  it('flags an unreviewed caveat, and not a reviewed one', () => {
+    const { rerender } = render(<InfoPanel map={fixtureMap()} />)
+    expect(screen.getByText('Caveat not yet medically reviewed')).toBeInTheDocument()
+    rerender(<InfoPanel map={fixtureMap({ caveat_reviewed: true })} />)
+    expect(screen.queryByText('Caveat not yet medically reviewed')).toBeNull()
+    expect(screen.getByText('Example caveat')).toBeInTheDocument()
+  })
+
+  it('labels the Wager study count as the whole model', () => {
+    render(<InfoPanel map={fixtureMap()} />)
+    expect(screen.getByText('Studies in model (all five emotions)')).toBeInTheDocument()
+  })
 })

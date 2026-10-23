@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProfileChart from './ProfileChart'
+import { fixtureMap } from '../testFixtures'
 import type { Profile } from '../data/types'
 
 const regions = ['Visual', 'Amygdala']
@@ -26,5 +27,20 @@ describe('ProfileChart', () => {
     render(<ProfileChart profiles={[mk('fear')]} regions={regions} mode="size_normalised" />)
     expect(screen.queryByText(/Unassigned/)).toBeNull()
     expect(screen.getAllByTestId('profile-bar')).toHaveLength(2)
+  })
+
+  it('labels the quantity of each profile in the legend', () => {
+    const stat: Profile = { ...mk('retrieval'), quantity: 'voxel_share' }
+    const maps = [
+      fixtureMap(),
+      fixtureMap({ id: 'retrieval', label: 'Retrieval', study_id: 'other', threshold: 3.1, threshold_type: 'statistical' }),
+      fixtureMap({ id: 'anx', label: 'Anxiety', study_id: 'x', threshold: null, threshold_type: 'none' }),
+    ]
+    render(<ProfileChart profiles={[mk('fear'), stat, mk('anx')]} regions={regions} mode="share"
+      labels={{ fear: 'Fear', retrieval: 'Retrieval', anx: 'Anxiety' }} maps={maps} />)
+    const legend = screen.getAllByRole('listitem').map((li) => li.textContent?.trim())
+    expect(legend[0]).toBe('Fear — share of total map intensity (all positive values; the display cut is not applied)')
+    expect(legend[1]).toBe('Retrieval — share of suprathreshold voxels (statistical threshold 3.1)')
+    expect(legend[2]).toBe('Anxiety — share of total map intensity (unthresholded)')
   })
 })

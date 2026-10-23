@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Niivue, SHOW_RENDER } from '@niivue/niivue'
 import type { AtlasFile, MapMeta } from '../data/types'
 import { groupScales, type ScaleGroup } from '../data/scales'
+import { colormapGradient } from './colourbar'
 
 export const WEBGL2_MESSAGE =
   '3D view needs WebGL2, which this browser does not provide. The map details and network profiles below still work.'
@@ -11,6 +12,8 @@ const COOL = 'winter'
 
 interface Props {
   maps: MapMeta[]
+  // Every published map; a study's colour range spans all of its maps, not just the selection.
+  allMaps?: MapMeta[]
   cut: number | null
   showLabels: boolean
   atlas?: AtlasFile
@@ -25,16 +28,32 @@ function hasWebGL2(): boolean {
   }
 }
 
+// Canvases of one viewer group share crosshair, slice position and 3D view:
+// each instance broadcasts to the others (NiiVue only sends from the focused canvas).
+type SyncSet = Set<Niivue>
+const SYNC_OPTS = { '2d': true, '3d': true }
+
+function relink(set: SyncSet) {
+  for (const nv of set) {
+    try {
+      nv.broadcastTo([...set].filter((o) => o !== nv), SYNC_OPTS)
+    } catch {
+      /* sync is a convenience; never break drawing */
+    }
+  }
+}
+
 interface CanvasProps {
   map: MapMeta
   group: ScaleGroup
+  sync: SyncSet
   calMin: number
   showLabels: boolean
   atlas?: AtlasFile
   dataBase: string
 }
 
-function MapCanvas({ map, group, calMin, showLabels, atlas, dataBase }: CanvasProps) {
+function MapCanvas({ map, group, sync, calMin, showLabels, atlas, dataBase }: CanvasProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const nvRef = useRef<Niivue | null>(null)
   const loadedRef = useRef(false)
@@ -75,6 +94,7 @@ function MapCanvas({ map, group, calMin, showLabels, atlas, dataBase }: CanvasPr
       nv = null
       if (nvRef.current === inst) nvRef.current = null
       loadedRef.current = false
+      if (sync.delete(inst)) relink(sync)
       try {
         inst.cleanup()
       } catch {
@@ -98,6 +118,8 @@ function MapCanvas({ map, group, calMin, showLabels, atlas, dataBase }: CanvasPr
         await inst.attachToCanvas(canvas)
         if (cancelled) return teardown()
         nvRef.current = inst
+        sync.add(inst)
+        relink(sync)
         setReady(true)
       } catch (e) {
         if (cancelled) return teardown()
@@ -148,8 +170,11 @@ function MapCanvas({ map, group, calMin, showLabels, atlas, dataBase }: CanvasPr
         loadedRef.current = true
         nv.setSliceType(nv.sliceTypeMultiplanar)
         try {
-          // Start with the crosshair near the right amygdala (MNI 22, -4, -12).
-          nv.scene.crosshairPos = nv.mm2frac([22, -4, -12])
+          // Start at the volume centre, not on any structure or peak, so no map is
+          // framed around one region. A canvas added to a group joins its peers'
+          // current position instead, so the group stays in step.
+          const peer = [...sync].find((o) => o !== nv && o.volumes.length > 0)
+          nv.scene.crosshairPos = peer ? nv.mm2frac(peer.frac2mm(peer.scene.crosshairPos)) : [0.5, 0.5, 0.5]
           nv.drawScene()
         } catch {
           /* cosmetic only */
@@ -184,13 +209,26 @@ function MapCanvas({ map, group, calMin, showLabels, atlas, dataBase }: CanvasPr
 
 export default function BrainViewer({
   maps,
+  allMaps,
   cut,
   showLabels,
   atlas,
   dataBase = `${import.meta.env.BASE_URL}data/`,
 }: Props) {
   const webgl2 = useMemo(() => hasWebGL2(), [])
-  const groups = useMemo(() => groupScales(maps), [maps])
+  const groups = useMemo(() => groupScales(maps, allMaps ?? maps), [maps, allMaps])
+  // One stable sync set per study, kept for the life of the viewer.
+  const [syncSets] = useState(() => new Map<string, SyncSet>())
+  const syncFor = (studyId: string) => {
+    let set = syncSets.get(studyId)
+    if (!set) {
+      set = new Set()
+      syncSets.set(studyId, set)
+    }
+    return set
+  }
+  const warm = useMemo(() => colormapGradient(WARM), [])
+  const cool = useMemo(() => colormapGradient(COOL), [])
 
   if (!webgl2) return <p className="webgl-message" role="status">{WEBGL2_MESSAGE}</p>
   if (maps.length === 0) return <p className="viewer-empty">Pick a condition to see its map.</p>
@@ -206,7 +244,7 @@ export default function BrainViewer({
           <section className="viewer-group" data-testid="viewer-group" key={g.studyId}>
             <div className="viewer-grid">
               {gm.map((m) => (
-                <MapCanvas key={m.id} map={m} group={g} calMin={calMin} showLabels={showLabels} atlas={atlas} dataBase={dataBase} />
+                <MapCanvas key={m.id} map={m} group={g} sync={syncFor(g.studyId)} calMin={calMin} showLabels={showLabels} atlas={atlas} dataBase={dataBase} />
               ))}
             </div>
             {g.studyId !== 'wager2015' && <p className="group-threshold">{first.threshold_label}</p>}
@@ -214,14 +252,14 @@ export default function BrainViewer({
               <div className="colourbar-label">
                 {first.value_meaning} — {first.citation.split('(')[0].trim()} ({g.studyId})
               </div>
-              <div className="colourbar-gradient warm" />
+              <div className="colourbar-gradient warm" data-testid="colourbar-warm" style={{ background: warm }} />
               <div className="colourbar-ticks">
                 <span>{calMin <= 1e-6 ? '> 0' : calMin}</span>
                 <span>{g.max}</span>
               </div>
               {gm.some((m) => m.files.neg) && (
                 <>
-                  <div className="colourbar-gradient cool" />
+                  <div className="colourbar-gradient cool" data-testid="colourbar-cool" style={{ background: cool }} />
                   <div className="colourbar-ticks"><span>decreases</span></div>
                 </>
               )}

@@ -41,7 +41,7 @@ export default function LessonPlayer({
 
   return (
     <article className="lesson-player">
-      {!lessons.reviewed && <p className="draft-banner" role="note">Draft — not yet medically reviewed</p>}
+      {!lesson.reviewed && <p className="draft-banner" role="note">Draft — not yet medically reviewed</p>}
       <p className="lesson-progress">Lesson {index + 1} of {total}</p>
       <h2>{lesson.title}</h2>
       {unavailable ? (

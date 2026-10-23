@@ -4,9 +4,13 @@ import BrainViewer from './viewer/BrainViewer'
 import InfoPanel from './panels/InfoPanel'
 import ProfileChart, { type ProfileMode } from './panels/ProfileChart'
 import LessonPlayer, { type LessonView } from './lessons/LessonPlayer'
+import SiteFooter from './panels/SiteFooter'
+import { studyRange } from './data/scales'
+import { cutLabel } from './data/cutLabel'
 import './App.css'
 
 const UNTHRESHOLDED = 1e-9
+const WAGER = 'wager2015'
 
 export default function App() {
   const [data, setData] = useState<LoadedData | null>(null)
@@ -36,8 +40,11 @@ export default function App() {
 
   const profiles = data.profiles.filter((p) => selected.includes(p.map_id))
   const labels = Object.fromEntries(data.maps.map((m) => [m.id, m.label]))
-  const wagerMaps = maps.filter((m) => m.study_id === 'wager2015')
-  const sliderMax = Math.max(0.001, ...wagerMaps.map((m) => m.display_max))
+  const wagerMaps = maps.filter((m) => m.study_id === WAGER)
+  const wagerRef = data.maps.find((m) => m.study_id === WAGER)
+  const authorsCut = wagerRef?.threshold ?? 0.001
+  // Study-wide, so the slider range does not change with the selection either.
+  const sliderMax = Math.max(authorsCut, studyRange(data.maps, WAGER)?.max ?? authorsCut)
   const effectiveCut = unthresholded ? UNTHRESHOLDED : cut
 
   const showOverlay = !guided || (!lessonUnavailable && lessonView !== 'profile')
@@ -86,18 +93,22 @@ export default function App() {
           {wagerMaps.length > 0 && (
             <>
           <label className="slider">
-            Display cut: {effectiveCut === null ? 'default' : unthresholded ? 'none' : cut}
+            Display cut: {unthresholded ? 'none' : cut === null ? `${authorsCut} (authors' default)` : cut}
             <input
               type="range"
-              min={0.001}
+              min={authorsCut}
               max={sliderMax}
               step={0.001}
-              value={cut ?? 0.001}
+              value={cut ?? authorsCut}
               disabled={unthresholded}
               onChange={(e) => setCut(Number(e.target.value))}
             />
           </label>
-          {wagerMaps[0] && <p className="threshold-label">{wagerMaps[0].threshold_label}</p>}
+          {wagerRef && (
+            <p className="threshold-label" data-testid="cut-label">
+              {cutLabel(wagerRef.threshold_label, authorsCut, cut, unthresholded)}
+            </p>
+          )}
           <label>
             <input type="checkbox" checked={unthresholded} onChange={(e) => setUnthresholded(e.target.checked)} /> show
             unthresholded
@@ -127,11 +138,12 @@ export default function App() {
           <button onClick={() => setGuided(true)}>Guided lessons</button>
         )}
         {showOverlay && (
-          <BrainViewer maps={maps} cut={effectiveCut} showLabels={showLabels && data.atlasLabels} atlas={data.atlas} />
+          <BrainViewer maps={maps} allMaps={data.maps} cut={effectiveCut} showLabels={showLabels && data.atlasLabels} atlas={data.atlas} />
         )}
       </main>
       <section className="details">
-        {showOverlay && maps.map((m) => (
+        {/* Citation and caveat travel with the data in every view, including profile-only lessons. */}
+        {(showOverlay || showProfile) && maps.map((m) => (
           <InfoPanel key={m.id} map={m} />
         ))}
         {showProfile && profiles.length > 0 && (
@@ -145,10 +157,11 @@ export default function App() {
                 Relative to region size
               </button>
             </div>
-            <ProfileChart profiles={profiles} regions={data.regions} mode={mode} labels={labels} />
+            <ProfileChart profiles={profiles} regions={data.regions} mode={mode} labels={labels} maps={data.maps} />
           </div>
         )}
       </section>
+      <SiteFooter maps={data.maps} atlas={data.atlas} />
     </div>
   )
 }

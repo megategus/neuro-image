@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { canOverlay, groupScales } from './scales'
+import { groupScales, studyRange } from './scales'
 import type { MapMeta } from './types'
 
 const base: MapMeta = {
   id: '', label: '', group: 'emotion', study_id: 'wager2015', citation: 'c', doi: 'd',
   n_studies: 1, method: 'm', value_meaning: 'v', threshold: 0.001,
-  threshold_type: 'display-only', threshold_label: 't', licence: 'l', caveat: 'cv',
+  threshold_type: 'display-only', threshold_label: 't', licence: 'l', caveat: 'cv', caveat_reviewed: false,
   display_min: 0.001, display_max: 0.1, has_negative: false,
   files: { pos: '', neg: null },
 }
@@ -26,7 +26,7 @@ describe('groupScales', () => {
     ])
   })
 
-  it('fear+retrieval (different studies) -> two groups, and canOverlay is false', () => {
+  it('fear+retrieval (different studies) -> two groups', () => {
     const selected = [
       map('fear', 'wager2015', 0.002, 0.2),
       map('retrieval', 'neurosynth2011', 0.01, 0.8),
@@ -36,7 +36,6 @@ describe('groupScales', () => {
     expect(groups.map((g) => g.studyId)).toEqual(['wager2015', 'neurosynth2011'])
     expect(groups[0]).toEqual({ studyId: 'wager2015', mapIds: ['fear'], min: 0.002, max: 0.2 })
     expect(groups[1]).toEqual({ studyId: 'neurosynth2011', mapIds: ['retrieval'], min: 0.01, max: 0.8 })
-    expect(canOverlay(selected)).toBe(false)
   })
 
   it('single map -> one group equal to its own range', () => {
@@ -63,19 +62,37 @@ describe('groupScales', () => {
   })
 })
 
-describe('canOverlay', () => {
-  it('empty selection -> false', () => {
-    expect(canOverlay([])).toBe(false)
+describe('study-wide range', () => {
+  const all = [
+    map('fear', 'wager2015', 0.001, 0.0877),
+    map('anger', 'wager2015', 0.001, 0.1207),
+    map('sadness', 'wager2015', 0.001, 0.09),
+    map('retrieval', 'other', 0.5, 3),
+  ]
+
+  it('uses every map of the study, not just the selection', () => {
+    expect(groupScales([all[0]], all)).toEqual([
+      { studyId: 'wager2015', mapIds: ['fear'], min: 0.001, max: 0.1207 },
+    ])
   })
 
-  it('single map -> true', () => {
-    expect(canOverlay([map('fear', 'wager2015', 0.002, 0.2)])).toBe(true)
+  it("fear's range does not change when sadness or anger is added", () => {
+    const alone = groupScales([all[0]], all)[0]
+    const withSad = groupScales([all[0], all[2]], all)[0]
+    const withAll = groupScales([all[0], all[1], all[2]], all)[0]
+    expect(withSad.max).toBe(alone.max)
+    expect(withAll.max).toBe(alone.max)
+    expect(withSad.min).toBe(alone.min)
   })
 
-  it('all maps from one study -> true', () => {
-    expect(canOverlay([
-      map('fear', 'wager2015', 0.002, 0.2),
-      map('sadness', 'wager2015', 0.001, 0.5),
-    ])).toBe(true)
+  it('never mixes ranges across studies', () => {
+    const groups = groupScales([all[0], all[3]], all)
+    expect(groups[0].max).toBe(0.1207)
+    expect(groups[1]).toEqual({ studyId: 'other', mapIds: ['retrieval'], min: 0.5, max: 3 })
+  })
+
+  it('studyRange gives the study-wide range or null', () => {
+    expect(studyRange(all, 'wager2015')).toEqual({ min: 0.001, max: 0.1207 })
+    expect(studyRange(all, 'none')).toBeNull()
   })
 })

@@ -16,6 +16,7 @@ export function fixtureMap(over: Partial<MapMeta> = {}): MapMeta {
     threshold_label: 'display threshold chosen by the authors — not a significance test',
     licence: 'GPL-3.0 (CANlab repository); article CC-BY 4.0',
     caveat: 'Example caveat',
+    caveat_reviewed: false,
     display_min: 0.001,
     display_max: 0.12,
     has_negative: false,

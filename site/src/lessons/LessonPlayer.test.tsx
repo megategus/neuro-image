@@ -4,12 +4,11 @@ import LessonPlayer from './LessonPlayer'
 import type { Lesson, LessonsFile } from '../data/types'
 
 const lesson = (over: Partial<Lesson>): Lesson => ({
-  id: 'l', title: 'T', map_ids: ['fear'], view: 'overlay', body: ['p'], notice: 'n', claims: [], ...over,
+  id: 'l', title: 'T', map_ids: ['fear'], view: 'overlay', reviewed: true, body: ['p'], notice: 'n', claims: [], ...over,
 })
 const file = (reviewed: boolean): LessonsFile => ({
-  reviewed,
   lessons: [
-    lesson({ id: 'a', title: 'First lesson', body: ['Para <b>one</b>', 'Para two'], notice: 'Mind this',
+    lesson({ id: 'a', title: 'First lesson', reviewed, body: ['Para <b>one</b>', 'Para two'], notice: 'Mind this',
       claims: [{ text: 'A claim', source_doi: '10.1/abc' }] }),
     lesson({ id: 'b', title: 'Second lesson', map_ids: ['anger', 'fear'], view: 'both' }),
     lesson({ id: 'c', title: 'Third lesson', map_ids: ['anxiety'] }),
@@ -42,6 +41,16 @@ describe('LessonPlayer', () => {
     unmount()
     render(<LessonPlayer lessons={file(true)} onLoadMaps={vi.fn()} onExit={vi.fn()} />)
     expect(screen.queryByText('Draft — not yet medically reviewed')).toBeNull()
+  })
+
+  it('draft banner is per lesson', () => {
+    const mixed: LessonsFile = { lessons: [lesson({ id: 'a', title: 'Reviewed one', reviewed: true }),
+      lesson({ id: 'b', title: 'Draft one', reviewed: false })] }
+    render(<LessonPlayer lessons={mixed} onLoadMaps={vi.fn()} onExit={vi.fn()} />)
+    expect(screen.queryByText('Draft — not yet medically reviewed')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByRole('heading', { name: 'Draft one' })).toBeInTheDocument()
+    expect(screen.getByText('Draft — not yet medically reviewed')).toBeInTheDocument()
   })
 
   it('unavailable lesson shows message, skips onLoadMaps, stays navigable; last disables Next', () => {

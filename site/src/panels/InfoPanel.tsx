@@ -6,7 +6,8 @@ export default function InfoPanel({ map }: { map: MapMeta }) {
     ['Study', map.study_id],
     ['Source', map.citation],
     ['DOI', <a key="doi" href={`https://doi.org/${map.doi}`} target="_blank" rel="noreferrer">{map.doi}</a>],
-    ['Studies pooled', String(map.n_studies)],
+    // Wager 2015 fits one joint model across all five emotions; 148 is that model's total.
+    [map.study_id === 'wager2015' ? 'Studies in model (all five emotions)' : 'Studies pooled', String(map.n_studies)],
     ['Method', map.method],
     ['Values mean', map.value_meaning],
     ['Threshold', map.threshold_label],
@@ -15,7 +16,11 @@ export default function InfoPanel({ map }: { map: MapMeta }) {
     ['Display range', `${map.display_min} to ${map.display_max}`],
     ['Decreases present', map.has_negative ? 'yes' : 'no'],
     ['Licence', map.licence],
-    ['Caveat', map.caveat],
+    ['Caveat', map.caveat_reviewed ? map.caveat : (
+      <>
+        {map.caveat} <strong className="caveat-draft">Caveat not yet medically reviewed</strong>
+      </>
+    )],
   ]
   return (
     <section className="info-panel" aria-label={`About ${map.label}`}>

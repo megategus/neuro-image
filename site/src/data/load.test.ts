@@ -20,7 +20,7 @@ const files = (over: Record<string, unknown> = {}): Record<string, unknown> => (
   'maps.json': { maps: ids.map(meta), unavailable: [] },
   'profiles.json': { regions: ['A'], profiles: ids.map(profile) },
   'atlas.json': atlas(true),
-  'lessons.json': { reviewed: false, lessons: [] },
+  'lessons.json': { lessons: [] },
   ...over,
 })
 
@@ -47,7 +47,7 @@ describe('loadAll', () => {
     expect(r.unavailable).toEqual([])
     expect(r.profiles).toHaveLength(5)
     expect(r.regions).toEqual(['A'])
-    expect(r.lessons.reviewed).toBe(false)
+    expect(r.lessons.lessons).toEqual([])
     expect(r.atlas.template.licence).toBe('l')
     expect(r.atlasLabels).toBe(true)
     expect(calls).toContain('/x/data/maps.json')

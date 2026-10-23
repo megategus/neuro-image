@@ -1,4 +1,4 @@
-.app { display: grid; grid-template-columns: 260px 1fr; grid-template-areas: "h h" "p v" "p d"; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; }
+.app { display: grid; grid-template-columns: 260px 1fr; grid-template-areas: "h h" "p v" "p d" "f f"; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; }
 .app > header { grid-area: h; }
 .picker { grid-area: p; }
 .viewer { grid-area: v; }
@@ -17,8 +17,6 @@
 .viewer-error { color: #b00020; }
 .webgl-message { padding: 1rem; border: 1px solid #999; background: #f4f4f4; }
 .colourbar-gradient { height: 10px; margin-top: .25rem; }
-.colourbar-gradient.warm { background: linear-gradient(90deg, #7a0000, #ff4500, #ffd700, #ffffe0); }
-.colourbar-gradient.cool { background: linear-gradient(90deg, #0000ff, #00ffa0); }
 .colourbar-ticks { display: flex; justify-content: space-between; font-size: .8em; }
 .colourbar-label, .label-note, .region-readout { font-size: .85em; }
 .info-panel dl { margin: 0; }
@@ -35,7 +33,7 @@
 .bar { height: 100%; min-width: 1px; }
 .bar-value { font-size: .75em; }
 @media (max-width: 800px) {
-  .app { grid-template-columns: 1fr; grid-template-areas: "h" "p" "v" "d"; }
+  .app { grid-template-columns: 1fr; grid-template-areas: "h" "p" "v" "d" "f"; }
   .chart-row { grid-template-columns: 1fr; }
   .viewer-groups, .viewer-grid { grid-template-columns: 1fr; }
 }
@@ -47,3 +45,7 @@
 .lesson-nav { margin: 1rem 0; }
 .lesson-nav button { margin-right: .5rem; padding: .3rem .8rem; }
 .lesson-player { margin-bottom: 1rem; }
+.site-footer { grid-area: f; font-size: .85em; border-top: 1px solid #ccc; padding-top: .5rem; }
+.site-footer ul { padding-left: 1.2rem; }
+.caveat-draft { color: #8a5a00; }
+.legend-quantity { font-size: .85em; }

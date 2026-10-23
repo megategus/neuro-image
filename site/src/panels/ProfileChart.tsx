@@ -1,4 +1,5 @@
-import type { Profile } from '../data/types'
+import type { MapMeta, Profile } from '../data/types'
+import { quantityLabel } from './quantity'
 import { mapColour } from './palette'
 
 export type ProfileMode = 'share' | 'size_normalised'
@@ -8,9 +9,10 @@ interface Props {
   regions: string[]
   mode: ProfileMode
   labels?: Record<string, string>
+  maps?: MapMeta[]
 }
 
-export default function ProfileChart({ profiles, regions, mode, labels = {} }: Props) {
+export default function ProfileChart({ profiles, regions, mode, labels = {}, maps = [] }: Props) {
   const rows: { name: string; key: string; get: (p: Profile) => number }[] = regions.map((r) => ({
     name: r,
     key: r,
@@ -27,6 +29,8 @@ export default function ProfileChart({ profiles, regions, mode, labels = {} }: P
         {profiles.map((p, i) => (
           <li key={p.map_id}>
             <span className="swatch" style={{ background: mapColour(i) }} /> {labels[p.map_id] ?? p.map_id}
+            {' — '}
+            <span className="legend-quantity">{quantityLabel(p, maps.find((m) => m.id === p.map_id))}</span>
           </li>
         ))}
       </ul>

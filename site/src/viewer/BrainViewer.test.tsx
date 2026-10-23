@@ -2,7 +2,14 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const h = vi.hoisted(() => ({
-  instances: [] as { loadVolumes: ReturnType<typeof vi.fn>; updateGLVolume: ReturnType<typeof vi.fn>; volumes: Record<string, number>[] }[],
+  instances: [] as {
+    loadVolumes: ReturnType<typeof vi.fn>
+    updateGLVolume: ReturnType<typeof vi.fn>
+    broadcastTo: ReturnType<typeof vi.fn>
+    mm2frac: ReturnType<typeof vi.fn>
+    volumes: Record<string, number>[]
+    scene: { crosshairPos: number[] }
+  }[],
   loseContext: vi.fn(),
 }))
 
@@ -19,7 +26,9 @@ vi.mock('@niivue/niivue', () => {
       return this
     })
     setSliceType = vi.fn()
-    mm2frac = vi.fn().mockReturnValue([0.5, 0.5, 0.5])
+    mm2frac = vi.fn().mockImplementation((mm: number[]) => mm.map((v) => v / 100))
+    frac2mm = vi.fn().mockImplementation((f: number[]) => f.map((v) => v * 100))
+    broadcastTo = vi.fn()
     drawScene = vi.fn()
     updateGLVolume = vi.fn()
     cleanup = vi.fn()
@@ -27,7 +36,13 @@ vi.mock('@niivue/niivue', () => {
       h.instances.push(this)
     }
   }
-  return { Niivue, SHOW_RENDER: { NEVER: 0, ALWAYS: 1, AUTO: 2 } }
+  const cmapper = {
+    colormapFromKey: (name: string) =>
+      name === 'warm'
+        ? { R: [1, 2], G: [3, 4], B: [5, 6], A: [0, 0], I: [0, 255] }
+        : { R: [7, 8], G: [9, 10], B: [11, 12], A: [0, 0], I: [0, 255] },
+  }
+  return { Niivue, cmapper, SHOW_RENDER: { NEVER: 0, ALWAYS: 1, AUTO: 2 } }
 })
 
 import BrainViewer from './BrainViewer'
@@ -100,5 +115,57 @@ describe('BrainViewer', () => {
     await waitFor(() => expect(h.instances.every((i) => i.volumes.length === 2 && i.volumes[1].cal_min !== undefined)).toBe(true))
     const mins = h.instances.map((i) => i.volumes[1].cal_min).sort()
     expect(mins).toEqual([0.04, 0.5])
+  })
+
+  it('synchronises crosshair and 3D view within a group, never across groups', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({} as never)
+    const other = fixtureMap({ id: 'retrieval', label: 'Retrieval', study_id: 'other' })
+    render(<BrainViewer maps={[fixtureMap(), fixtureMap({ id: 'anger', label: 'Anger' }), other]} cut={null} showLabels={false} />)
+    await waitFor(() => expect(h.instances.every((i) => i.volumes.length === 2)).toBe(true))
+    const [fear, anger, retrieval] = h.instances
+    expect(fear.broadcastTo).toHaveBeenLastCalledWith([anger], { '2d': true, '3d': true })
+    expect(anger.broadcastTo).toHaveBeenLastCalledWith([fear], { '2d': true, '3d': true })
+    expect(retrieval.broadcastTo).toHaveBeenLastCalledWith([], { '2d': true, '3d': true })
+  })
+
+  it('unlinks a canvas from its group when its map is removed', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({} as never)
+    const fear = fixtureMap()
+    const anger = fixtureMap({ id: 'anger', label: 'Anger' })
+    const { rerender } = render(<BrainViewer maps={[fear, anger]} cut={null} showLabels={false} />)
+    await waitFor(() => expect(h.instances.every((i) => i.volumes.length === 2)).toBe(true))
+    const nvFear = h.instances[0]
+    rerender(<BrainViewer maps={[fear]} cut={null} showLabels={false} />)
+    await waitFor(() => expect(nvFear.broadcastTo).toHaveBeenLastCalledWith([], { '2d': true, '3d': true }))
+  })
+
+  it('starts the crosshair at the volume centre', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({} as never)
+    render(<BrainViewer maps={[fixtureMap()]} cut={null} showLabels={false} />)
+    await waitFor(() => expect(h.instances[0].volumes.length).toBe(2))
+    await waitFor(() => expect(h.instances[0].scene.crosshairPos).toEqual([0.5, 0.5, 0.5]))
+    expect(h.instances[0].mm2frac).not.toHaveBeenCalledWith([22, -4, -12])
+  })
+
+  it("keeps fear's colour range when sadness is added (study-wide scale)", async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({} as never)
+    const all = [
+      fixtureMap({ display_max: 0.0877 }),
+      fixtureMap({ id: 'sadness', label: 'Sadness', display_max: 0.09 }),
+      fixtureMap({ id: 'anger', label: 'Anger', display_max: 0.1207 }),
+    ]
+    const { rerender } = render(<BrainViewer maps={[all[0]]} allMaps={all} cut={null} showLabels={false} />)
+    await waitFor(() => expect(h.instances[0].volumes[1]?.cal_max).toBe(0.1207))
+    rerender(<BrainViewer maps={[all[0], all[1]]} allMaps={all} cut={null} showLabels={false} />)
+    await waitFor(() => expect(h.instances.length).toBe(2))
+    await waitFor(() => expect(h.instances[1].volumes[1]?.cal_max).toBe(0.1207))
+    expect(h.instances[0].volumes[1].cal_max).toBe(0.1207)
+  })
+
+  it("draws the colour bar from NiiVue's colour-map stops", () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({} as never)
+    render(<BrainViewer maps={[fixtureMap({ has_negative: true, files: { pos: 'p', neg: 'n' } })]} cut={null} showLabels={false} />)
+    expect(screen.getByTestId('colourbar-warm').style.background).toContain('rgb(1, 3, 5)')
+    expect(screen.getByTestId('colourbar-cool').style.background).toContain('rgb(8, 10, 12)')
   })
 })

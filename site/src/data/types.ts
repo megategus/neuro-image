@@ -15,6 +15,7 @@ export interface MapMeta {
   threshold_label: string
   licence: string
   caveat: string
+  caveat_reviewed: boolean
   display_min: number
   display_max: number
   has_negative: boolean
@@ -55,12 +56,13 @@ export interface AtlasSource {
   citation: string
   licence: string
   bundled: boolean
+  notice?: string
 }
 
 export interface AtlasFile {
   labels: Record<string, AtlasLabel>
   sources: AtlasSource[]
-  template: { name: string; licence: string }
+  template: { name: string; licence: string; notice?: string }
 }
 
 export interface Claim {
@@ -73,12 +75,12 @@ export interface Lesson {
   title: string
   map_ids: string[]
   view: 'overlay' | 'profile' | 'both'
+  reviewed: boolean
   body: string[]
   notice: string
   claims: Claim[]
 }
 
 export interface LessonsFile {
-  reviewed: boolean
   lessons: Lesson[]
 }
