@@ -64,9 +64,11 @@ Source key:
    - spec §8.1 (project rule). One BSPP model for all five categories (W2015).
 2. "The authors report that regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotions, though with different and meaningful distributions within each region."
    - W2015: "Notably, limbic and paralimbic regions such as the amgydala, ventral striatum, orbitofrontal cortex (OFC), anterior cingulate cortex (ACC), brainstem, and insula were likely to be active in all emotion categories, though with different and meaningful distributions within each region".
-3. "In the "Relative to region size" view the amygdala has the highest value for all five emotions (about 8 to 18 times the average density), but this means many studies reported peaks there, and dividing by the size of a small structure inflates the number; it does not mean that emotion happens there."
+3. "In the "Relative to region size" view the amygdala has the highest value for all five emotions (about 8 to 18 times the average density), but this reflects reported peaks in and around it: a small structure's value is easily swung by a few nearby peaks, which the model's spatial spread carries in from neighbouring tissue, and it does not mean that emotion happens there."
    - profiles.json, *size_normalised*, Amygdala: sadness 8.13, happiness 9.57, disgust 11.36, anger 12.93, fear 17.69. For every emotion this is the highest of the 11 regions.
-   - The interpretation ("peaks reported there", "small-structure inflation") follows from the value definition (Lesson 1, item 2) and the size-normalisation formula (`pipeline/src/atlas_pipeline/profile.py`).
+   - Size-normalising gives the true average density, so the value is not inflated by size. But a small structure's average rests on few voxels, so a few nearby peaks swing it.
+   - "Spatial spread": W2015, Fig. 1 legend: the method "models the population density of activation across the brain with a sparse set of multivariate Gaussian distributions at two levels (study center and population center)".
+   - "Reflects reported peaks": the value definition (Lesson 1, item 2).
 4. "The authors also warn that amygdala values for negative emotions may be over-represented because the field has focused on fear."
    - W2015 Limitations: "our analyses reflect the composition of the studies available in the literature, and are subject to testing and reporting biases on the part of authors. This is particularly true for the amygdala (e.g., the activation intensity for negative emotions may be over-represented in the amygdala given the theoretical focus on fear and related negative states)."
 5. "Every emotion places some intensity in all seven cortical networks, and about 42–48% of each map lies outside the labelled regions, for example in white matter, cerebellum and basal ganglia."
@@ -181,8 +183,8 @@ Removed in fix round 1: the paper's anger/fear vs disgust/sadness/happiness netw
    - For the memory side it is **NEEDS SOURCE**.
 2. "The fear map already reaches the hippocampus: relative to its size, the hippocampus holds about 4 times the average density of the labelled regions in the fear profile, second only to the amygdala at about 18 ("Relative to region size" view)."
    - profiles.json, fear, *size_normalised*: Amygdala 17.69, Hippocampus 4.43. The next highest is Thalamus at 2.11.
-3. "Fear also places about 12% of its map intensity in the default mode network, roughly what that network's size alone would predict (about 1 in the "Relative to region size" view); that network is generally reported to be engaged during memory retrieval too."
-   - profiles.json, fear: Default mode *share* 0.1155, *size_normalised* 1.03.
+3. "Fear's density in the default mode network is about average for the labelled regions (about 1 in the "Relative to region size" view); that network is generally reported to be engaged during memory retrieval too."
+   - profiles.json, fear: Default mode *size_normalised* 1.03.
    - "Engaged during memory retrieval": **NEEDS SOURCE** (the verified retrieval paper).
 4. "The two maps come from different studies and methods, so compare their profiles, not their colours; the profiles show where the evidence lies, not how strong it is."
    - spec §8.1 and §8.2.
@@ -211,11 +213,17 @@ Removed in fix round 1: the paper's anger/fear vs disgust/sadness/happiness netw
 
 ## Caveats (the `caveat:` field in `pipeline/sources.yaml`, shown in each map's info panel)
 
-The five Wager maps share one core text of two sentences:
+Every Wager caveat is two sentences. Sentence 1 is the same for all five:
 
-> "Shows where studies of {emotion} tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to {emotion}, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+> S1: "Shows where studies of {emotion} tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to {emotion}; what differs between emotions is the overall pattern."
 
-Sources for the core text:
+The standard second sentence (anger, disgust, happiness):
+
+> S2: "The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+
+Fear and sadness use their own second sentence (see the table). Their info panels still show the display-threshold label.
+
+Sources for S1 and S2:
 - "Not specific" (W2015 Introduction): "the regions most reliably activated—e.g., the anterior cingulate, anterior insula, amygdala, and orbitofrontal cortex—are activated in multiple categories of emotions [12], and during many other sensory, perceptual and cognitive events [11,13]. Thus, activation of these regions is not specific to one emotion category or even emotion more generally."
 - "Overall pattern" (W2015 abstract): "emotion categories are not contained within any one region or system, but are represented as configurations across multiple brain networks."
 - "No negative values": spec §6.1.
@@ -225,11 +233,11 @@ The dataset-wide limitations (varied tasks; brainstem and vmPFC under-represente
 
 | Map | Caveat | Extra source |
 |---|---|---|
-| anger | core text | — |
-| disgust | core text | — |
-| fear | core text | The amygdala reporting-bias warning is in Lesson 2, item 4, because it applies to all negative emotions. |
-| happiness | core text | — |
-| sadness | core + "In-scanner sadness tasks are typically low-arousal, so the map may not represent intense grief." | W2015: "sadness can be high-arousal, but in-scanner sadness manipulations are typically low-arousal". "Intense grief" is Claude's example. This makes the caveat three sentences (see Questions). |
+| anger | S1 + S2 | — |
+| disgust | S1 + S2 | — |
+| fear | S1 + "The map has no negative values, so it cannot show decreases, and the authors warn that amygdala values for negative emotions may be over-represented because the field has focused on fear." | W2015 Limitations: "the activation intensity for negative emotions may be over-represented in the amygdala given the theoretical focus on fear and related negative states". The same warning also appears in Lesson 2, item 4. |
+| happiness | S1 + S2 | — |
+| sadness | S1 + "The map has no negative values, so it cannot show decreases; in-scanner sadness tasks are typically low-arousal, so it may not represent intense grief." | W2015: "sadness can be high-arousal, but in-scanner sadness manipulations are typically low-arousal". "Intense grief" is Claude's example. |
 | anxiety | "Anxiety is shown as a contrast with fear (sustained apprehension about uncertain threat), not as a basic emotion; this map does not show anxiety disorders or a region specific to anxiety. Its values come from a different method than the emotion maps, so the two cannot be compared colour for colour." | **NEEDS SOURCE / generic.** The framing is from spec §6.2. "Not anxiety disorders" assumes the map finally chosen is the induced-anxiety-in-healthy-participants map (spec target, unverified). "Different method" assumes SDM (spec, unverified). Re-check both once the map is verified. |
 | retrieval | "Shows where studies of remembering past events reported increases relative to their control tasks; it does not show where memories are stored, and the regions it highlights are not specific to memory. Its method differs from the emotion maps, so compare it with them only through the network profile." | **NEEDS SOURCE / generic.** "Increases relative to control" assumes the spec §6.3 acceptance rule (a retrieval-vs-control/baseline map) is met. "Not specific to memory" is general background. Re-check once the map is verified. |
 
@@ -241,6 +249,5 @@ The dataset-wide limitations (varied tasks; brainstem and vmPFC under-represente
 2. **The 34–55% coverage figure** (Lesson 1, item 3) is a project measurement, not a number from the paper. Keep it?
 3. **Visual network.** Fear's profile has a visual-network share of 0.132. The paper reports that 90% of fear studies used visual images ("2% of studies used recall and 90% used visual images to induce fear"). The lessons no longer quote the visual figure. Should the stimulus point be added to the fear caveat?
 4. **Amygdala framing** (Lesson 2, items 3–4). Is the explanation of the high size-normalised amygdala value clear and correct for students?
-5. **The sadness caveat** is three sentences, against the 1–2 guideline. Keep the low-arousal sentence?
-6. **Lessons 3–5:** every NEEDS SOURCE sentence must be confirmed or replaced once the anxiety and retrieval maps and their papers are verified. Keep them as placeholders, or cut them to the bare instructions until then? They are hidden on the site while the maps are unavailable.
-7. **Anatomy wording** (Lesson 5, item 1): "just anterior to the hippocampal head". Would you add "and partly superior"?
+5. **Lessons 3–5:** every NEEDS SOURCE sentence must be confirmed or replaced once the anxiety and retrieval maps and their papers are verified. Keep them as placeholders, or cut them to the bare instructions until then? They are hidden on the site while the maps are unavailable.
+6. **Anatomy wording** (Lesson 5, item 1): "just anterior to the hippocampal head". Would you add "and partly superior"?

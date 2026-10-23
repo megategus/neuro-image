@@ -14,7 +14,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "Shows where studies of anger tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to anger, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat: "Shows where studies of anger tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to anger; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
   - id: disgust
     label: Disgust
     group: emotion
@@ -30,7 +30,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "Shows where studies of disgust tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to disgust, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat: "Shows where studies of disgust tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to disgust; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
   - id: fear
     label: Fear
     group: emotion
@@ -46,7 +46,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "Shows where studies of fear tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to fear, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat: "Shows where studies of fear tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to fear; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the authors warn that amygdala values for negative emotions may be over-represented because the field has focused on fear."
   - id: happiness
     label: Happiness
     group: emotion
@@ -62,7 +62,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "Shows where studies of happiness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to happiness, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat: "Shows where studies of happiness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to happiness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
   - id: sadness
     label: Sadness
     group: emotion
@@ -78,7 +78,7 @@ sources:
     threshold: 0.001
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
-    caveat: "Shows where studies of sadness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to sadness, because what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test. In-scanner sadness tasks are typically low-arousal, so the map may not represent intense grief."
+    caveat: "Shows where studies of sadness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to sadness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases; in-scanner sadness tasks are typically low-arousal, so it may not represent intense grief."
   - id: anxiety
     label: Anxiety
     group: anxiety

@@ -27,7 +27,7 @@
       "body": [
         "All five maps come from the same model and use the same units, so here, and only here, they share one colour scale.",
         "The authors report that regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotions, though with different and meaningful distributions within each region.",
-        "In the \"Relative to region size\" view the amygdala has the highest value for all five emotions (about 8 to 18 times the average density), but this means many studies reported peaks there, and dividing by the size of a small structure inflates the number; it does not mean that emotion happens there.",
+        "In the \"Relative to region size\" view the amygdala has the highest value for all five emotions (about 8 to 18 times the average density), but this reflects reported peaks in and around it: a small structure's value is easily swung by a few nearby peaks, which the model's spatial spread carries in from neighbouring tissue, and it does not mean that emotion happens there.",
         "The authors also warn that amygdala values for negative emotions may be over-represented because the field has focused on fear.",
         "Every emotion places some intensity in all seven cortical networks, and about 42–48% of each map lies outside the labelled regions, for example in white matter, cerebellum and basal ganglia.",
         "No emotion mapped onto a single cortical network, and an earlier review found no consistent one-region-per-emotion mapping (Lindquist et al., 2012)."
@@ -84,7 +84,7 @@
       "body": [
         "The amygdala lies just anterior to the hippocampal head in the medial temporal lobe; being neighbours does not mean doing the same thing, and neither structure does only one thing.",
         "The fear map already reaches the hippocampus: relative to its size, the hippocampus holds about 4 times the average density of the labelled regions in the fear profile, second only to the amygdala at about 18 (\"Relative to region size\" view).",
-        "Fear also places about 12% of its map intensity in the default mode network, roughly what that network's size alone would predict (about 1 in the \"Relative to region size\" view); that network is generally reported to be engaged during memory retrieval too.",
+        "Fear's density in the default mode network is about average for the labelled regions (about 1 in the \"Relative to region size\" view); that network is generally reported to be engaged during memory retrieval too.",
         "The two maps come from different studies and methods, so compare their profiles, not their colours; the profiles show where the evidence lies, not how strong it is.",
         "Ask whether the two conditions differ in which regions they use at all, or in how their evidence is weighted across the same networks."
       ],
