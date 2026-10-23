@@ -39,3 +39,10 @@
   .chart-row { grid-template-columns: 1fr; }
   .viewer-groups, .viewer-grid { grid-template-columns: 1fr; }
 }
+.draft-banner { background: #fff3cd; border: 1px solid #c9a227; padding: .4rem .6rem; font-weight: 600; }
+.lesson-progress { font-size: .85em; margin: 0; }
+.lesson-notice { border-left: 4px solid #c9a227; background: #fffbe6; padding: .4rem .8rem; }
+.lesson-notice p { margin: .25rem 0 0; }
+.lesson-unavailable { font-style: italic; }
+.lesson-nav button { margin-right: .5rem; padding: .3rem .8rem; }
+.lesson-player { margin-bottom: 1rem; }

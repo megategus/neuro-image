@@ -3,6 +3,7 @@ import { loadAll, type LoadedData } from './data/load'
 import BrainViewer from './viewer/BrainViewer'
 import InfoPanel from './panels/InfoPanel'
 import ProfileChart, { type ProfileMode } from './panels/ProfileChart'
+import LessonPlayer, { type LessonView } from './lessons/LessonPlayer'
 import './App.css'
 
 const UNTHRESHOLDED = 1e-9
@@ -15,6 +16,10 @@ export default function App() {
   const [unthresholded, setUnthresholded] = useState(false)
   const [showLabels, setShowLabels] = useState(false)
   const [mode, setMode] = useState<ProfileMode>('share')
+  const [guided, setGuided] = useState(true)
+  const [lessonView, setLessonView] = useState<LessonView>('both')
+  const [lessonIndex, setLessonIndex] = useState(0)
+  const availableIds = data ? data.maps.map((m) => m.id) : []
 
   useEffect(() => {
     loadAll().then(setData).catch((e: Error) => setError(e.message))
@@ -33,6 +38,14 @@ export default function App() {
   const wagerMaps = maps.filter((m) => m.study_id === 'wager2015')
   const sliderMax = Math.max(0.001, ...wagerMaps.map((m) => m.display_max))
   const effectiveCut = unthresholded ? UNTHRESHOLDED : cut
+
+  const showOverlay = !guided || lessonView !== 'profile'
+  const showProfile = !guided || lessonView !== 'overlay'
+
+  const loadMaps = (ids: string[], view: LessonView) => {
+    setSelected(ids.filter((id) => availableIds.includes(id)))
+    setLessonView(view)
+  }
 
   const toggle = (id: string) =>
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
@@ -93,13 +106,27 @@ export default function App() {
         </div>
       </aside>
       <main className="viewer">
-        <BrainViewer maps={maps} cut={effectiveCut} showLabels={showLabels && data.atlasLabels} atlas={data.atlas} />
+        {guided ? (
+          <LessonPlayer
+            lessons={data.lessons}
+            unavailableIds={data.unavailable.map((u) => u.id)}
+            initialIndex={lessonIndex}
+            onIndexChange={setLessonIndex}
+            onLoadMaps={loadMaps}
+            onExit={() => setGuided(false)}
+          />
+        ) : (
+          <button onClick={() => setGuided(true)}>Guided lessons</button>
+        )}
+        {showOverlay && (
+          <BrainViewer maps={maps} cut={effectiveCut} showLabels={showLabels && data.atlasLabels} atlas={data.atlas} />
+        )}
       </main>
       <section className="details">
-        {maps.map((m) => (
+        {showOverlay && maps.map((m) => (
           <InfoPanel key={m.id} map={m} />
         ))}
-        {profiles.length > 0 && (
+        {showProfile && profiles.length > 0 && (
           <div>
             <h2>Network profile</h2>
             <div role="group" aria-label="Profile mode" className="mode-toggle">
