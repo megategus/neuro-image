@@ -19,7 +19,7 @@ An interactive, browser-based teaching tool that shows published meta-analytic b
 | Episodic memory retrieval | NeuroVault collection 12234 | pending verification | pending verification |
 | Network atlas | Yeo 7 networks (CBIG) | | MIT |
 | Subcortical regions | Harvard–Oxford (used to compute profiles only, not shipped) | | FSL licence |
-| Background template | MNI152 (nilearn) | | permissive |
+| Background template | MNI ICBM152 2009 (nilearn) | | MNI licence (permissive; keep copyright notice) |
 
 Anxiety and retrieval are `unverified` in `pipeline/sources.yaml`. They do not break the build; the site shows "not yet available" for them until verified.
 
@@ -54,17 +54,21 @@ Then fill in that entry in `pipeline/sources.yaml` (URL, sha256, citation, DOI, 
 - Retrieval: a retrieval-versus-baseline (main effect or pooled) map showing where retrieval happens. Fallback collections in order: 21947, then 20036. Between-type contrasts (episodic > semantic, source > item) are not acceptable as the main map.
 - Unusable if there is no such map, it is not in MNI space, or it is pre-thresholded at an unstated cut.
 - Record the threshold and its type exactly as the authors state them; never choose one.
+- `threshold` is in the map's own value units (it is compared with voxel values). If the authors state a p-value for a z- or t-map, convert it to that map's units and say so; never choose one.
+- `build` rejects a map that looks pre-thresholded (over 30% of in-brain voxels exactly zero) unless its `threshold_type` is `statistical` with the authors' stated threshold.
+- Leave `caveat_reviewed: false` until the medical reviewer approves the caveat.
 
 ## Medical-review gate
 
-Lesson and caveat text are drafts. The deploy build refuses to publish until a reviewer signs off:
+Lesson and caveat text are drafts. Sign-off is per lesson and per caveat, so a later source verification cannot publish unreviewed text:
 
 1. Review and edit the text in `docs/lessons-review.md`.
 2. Apply the edits to `pipeline/lessons/lessons.json` (and the `caveat:` fields in `pipeline/sources.yaml`).
-3. Set `"reviewed": true` at the top of `pipeline/lessons/lessons.json`.
-4. Rebuild: `cd pipeline && uv run python -m atlas_pipeline build --deploy --out ../site/public/data`.
+3. For each approved lesson, set `"reviewed": true` on that lesson in `pipeline/lessons/lessons.json`.
+4. For each approved caveat, set `caveat_reviewed: true` on that source in `pipeline/sources.yaml`.
+5. Rebuild: `cd pipeline && uv run python -m atlas_pipeline build --deploy --out ../site/public/data`.
 
-`build --deploy` also fails on leftover TODO text.
+`build --deploy` fails if any lesson whose maps are all verified is unreviewed, if any verified source's caveat is unreviewed, or if any lesson or map text still contains `TODO`. Lessons and caveats that depend on an unverified source do not block deploy; they start blocking as soon as that source is verified. The site marks unreviewed lessons "Draft — not yet medically reviewed" and unreviewed caveats "Caveat not yet medically reviewed".
 
 ## Publish on GitHub Pages
 
@@ -72,4 +76,4 @@ In the repository, go to Settings, then Pages, and set Source to **GitHub Action
 
 ## Licence
 
-GPL-3.0 (see `LICENSE`). Bundled third-party data keeps its own licence, recorded per file in `site/public/data/maps.json` and `atlas.json`: Wager maps GPL-3.0 (article CC-BY 4.0), Yeo atlas MIT, MNI template permissive.
+GPL-3.0 (see `LICENSE`). Bundled third-party data keeps its own licence, recorded per file in `site/public/data/maps.json` and `atlas.json`: Wager maps GPL-3.0 (article CC-BY 4.0), Yeo atlas MIT (Copyright (c) 2016 CBIG), MNI ICBM152 template under the MNI licence (its copyright notice must accompany every copy). Harvard–Oxford is used to compute profiles only and is not distributed. The build writes the full notice texts to `site/public/data/NOTICES.txt`, and the site footer lists every source and licence and links that file, this repository and the GPL-3.0.
