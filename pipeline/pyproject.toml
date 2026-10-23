@@ -3,7 +3,11 @@ name = "atlas-pipeline"
 version = "0.1.0"
 description = "Data pipeline for the brain condition atlas"
 requires-python = ">=3.11"
-dependencies = ["pyyaml"]
+dependencies = [
+    "nibabel>=5.4.2",
+    "numpy>=2.4.6",
+    "pyyaml",
+]
 
 [dependency-groups]
 dev = ["pytest"]

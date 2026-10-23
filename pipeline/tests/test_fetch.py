@@ -49,3 +49,49 @@ def test_unverified_source_not_fetched_by_default(sources_yaml, tmp_path, monkey
     monkeypatch.setattr(urllib.request, "urlopen", _boom)
     with pytest.raises(FetchError, match="unverified"):
         fetch(anxiety, tmp_path)
+
+
+class _FakeResp:
+    def __init__(self, data, fail_after=None):
+        self._data, self._pos, self._fail_after = data, 0, fail_after
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def read(self, n=-1):
+        if self._fail_after is not None and self._pos >= self._fail_after:
+            import http.client
+
+            raise http.client.IncompleteRead(b"")
+        chunk = self._data[self._pos : self._pos + 4]
+        self._pos += len(chunk)
+        return chunk
+
+
+def test_fetch_downloads_then_renames(fear, tmp_path, monkeypatch):
+    fear = dataclasses.replace(fear, sha256=hashlib.sha256(b"payload").hexdigest())
+    monkeypatch.setattr(urllib.request, "urlopen", lambda url, timeout=None: _FakeResp(b"payload"))
+    path = fetch(fear, tmp_path)
+    assert path.read_bytes() == b"payload"
+    assert [p.name for p in tmp_path.iterdir()] == [_cached_name(fear)]
+
+
+def test_bad_checksum_download_not_cached(fear, tmp_path, monkeypatch):
+    fear = dataclasses.replace(fear, sha256="0" * 64)
+    monkeypatch.setattr(urllib.request, "urlopen", lambda url, timeout=None: _FakeResp(b"payload"))
+    with pytest.raises(FetchError, match="sha256"):
+        fetch(fear, tmp_path)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_truncated_download_raises_fetcherror(fear, tmp_path, monkeypatch):
+    fear = dataclasses.replace(fear, sha256=None)
+    monkeypatch.setattr(
+        urllib.request, "urlopen", lambda url, timeout=None: _FakeResp(b"payload", fail_after=4)
+    )
+    with pytest.raises(FetchError):
+        fetch(fear, tmp_path)
+    assert list(tmp_path.iterdir()) == []
