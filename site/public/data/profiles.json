@@ -1,0 +1,172 @@
+{
+  "regions": [
+    "Visual",
+    "Somatomotor",
+    "Dorsal attention",
+    "Ventral attention/salience",
+    "Limbic",
+    "Frontoparietal control",
+    "Default mode",
+    "Amygdala",
+    "Hippocampus",
+    "Thalamus",
+    "Brainstem"
+  ],
+  "profiles": [
+    {
+      "map_id": "anger",
+      "quantity": "intensity_share",
+      "share": {
+        "Visual": 0.107904,
+        "Somatomotor": 0.054969,
+        "Dorsal attention": 0.072101,
+        "Ventral attention/salience": 0.041133,
+        "Limbic": 0.023798,
+        "Frontoparietal control": 0.056211,
+        "Default mode": 0.133904,
+        "Amygdala": 0.04505,
+        "Hippocampus": 0.012503,
+        "Thalamus": 0.013484,
+        "Brainstem": 0.006909
+      },
+      "size_normalised": {
+        "Visual": 1.022499,
+        "Somatomotor": 0.651993,
+        "Dorsal attention": 1.334723,
+        "Ventral attention/salience": 0.917698,
+        "Limbic": 0.507063,
+        "Frontoparietal control": 0.887502,
+        "Default mode": 1.120845,
+        "Amygdala": 12.930102,
+        "Hippocampus": 1.733712,
+        "Thalamus": 0.998747,
+        "Brainstem": 0.272496
+      },
+      "unassigned": 0.432033
+    },
+    {
+      "map_id": "disgust",
+      "quantity": "intensity_share",
+      "share": {
+        "Visual": 0.177005,
+        "Somatomotor": 0.043976,
+        "Dorsal attention": 0.037735,
+        "Ventral attention/salience": 0.081787,
+        "Limbic": 0.028743,
+        "Frontoparietal control": 0.040289,
+        "Default mode": 0.089534,
+        "Amygdala": 0.04051,
+        "Hippocampus": 0.00607,
+        "Thalamus": 0.030466,
+        "Brainstem": 0.005056
+      },
+      "size_normalised": {
+        "Visual": 1.639187,
+        "Somatomotor": 0.509756,
+        "Dorsal attention": 0.682676,
+        "Ventral attention/salience": 1.783247,
+        "Limbic": 0.59853,
+        "Frontoparietal control": 0.621649,
+        "Default mode": 0.73242,
+        "Amygdala": 11.362825,
+        "Hippocampus": 0.822473,
+        "Thalamus": 2.205298,
+        "Brainstem": 0.194889
+      },
+      "unassigned": 0.418828
+    },
+    {
+      "map_id": "fear",
+      "quantity": "intensity_share",
+      "share": {
+        "Visual": 0.131744,
+        "Somatomotor": 0.037531,
+        "Dorsal attention": 0.034105,
+        "Ventral attention/salience": 0.03556,
+        "Limbic": 0.022664,
+        "Frontoparietal control": 0.031574,
+        "Default mode": 0.115462,
+        "Amygdala": 0.057812,
+        "Hippocampus": 0.029985,
+        "Thalamus": 0.026744,
+        "Brainstem": 0.009459
+      },
+      "size_normalised": {
+        "Visual": 1.331203,
+        "Somatomotor": 0.474688,
+        "Dorsal attention": 0.673225,
+        "Ventral attention/salience": 0.845967,
+        "Limbic": 0.514942,
+        "Frontoparietal control": 0.531581,
+        "Default mode": 1.030581,
+        "Amygdala": 17.693284,
+        "Hippocampus": 4.433455,
+        "Thalamus": 2.11223,
+        "Brainstem": 0.397815
+      },
+      "unassigned": 0.46736
+    },
+    {
+      "map_id": "happiness",
+      "quantity": "intensity_share",
+      "share": {
+        "Visual": 0.156894,
+        "Somatomotor": 0.06446,
+        "Dorsal attention": 0.02313,
+        "Ventral attention/salience": 0.055063,
+        "Limbic": 0.023618,
+        "Frontoparietal control": 0.050525,
+        "Default mode": 0.130563,
+        "Amygdala": 0.033453,
+        "Hippocampus": 0.014691,
+        "Thalamus": 0.011891,
+        "Brainstem": 0.005373
+      },
+      "size_normalised": {
+        "Visual": 1.482302,
+        "Somatomotor": 0.7623,
+        "Dorsal attention": 0.4269,
+        "Ventral attention/salience": 1.224827,
+        "Limbic": 0.50174,
+        "Frontoparietal control": 0.795341,
+        "Default mode": 1.08963,
+        "Amygdala": 9.573077,
+        "Hippocampus": 2.030951,
+        "Thalamus": 0.878128,
+        "Brainstem": 0.2113
+      },
+      "unassigned": 0.430339
+    },
+    {
+      "map_id": "sadness",
+      "quantity": "intensity_share",
+      "share": {
+        "Visual": 0.082529,
+        "Somatomotor": 0.070879,
+        "Dorsal attention": 0.027893,
+        "Ventral attention/salience": 0.076273,
+        "Limbic": 0.024313,
+        "Frontoparietal control": 0.036313,
+        "Default mode": 0.126101,
+        "Amygdala": 0.025756,
+        "Hippocampus": 0.012097,
+        "Thalamus": 0.018206,
+        "Brainstem": 0.016291
+      },
+      "size_normalised": {
+        "Visual": 0.85972,
+        "Somatomotor": 0.924212,
+        "Dorsal attention": 0.56763,
+        "Ventral attention/salience": 1.8707,
+        "Limbic": 0.569502,
+        "Frontoparietal control": 0.63027,
+        "Default mode": 1.160374,
+        "Amygdala": 8.126637,
+        "Hippocampus": 1.843938,
+        "Thalamus": 1.482443,
+        "Brainstem": 0.706373
+      },
+      "unassigned": 0.483349
+    }
+  ]
+}

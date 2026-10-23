@@ -1,0 +1,131 @@
+{
+  "maps": [
+    {
+      "id": "anger",
+      "label": "Anger",
+      "group": "emotion",
+      "study_id": "wager2015",
+      "citation": "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066.",
+      "doi": "10.1371/journal.pcbi.1004066",
+      "n_studies": 148,
+      "method": "Bayesian spatial point process (BSPP) coordinate-based meta-analysis",
+      "value_meaning": "posterior expected number of activation centres",
+      "threshold": 0.001,
+      "threshold_type": "display-only",
+      "threshold_label": "display threshold chosen by the authors — not a significance test",
+      "licence": "GPL-3.0 (CANlab repository); article CC-BY 4.0",
+      "caveat": "TODO-caveat",
+      "display_min": 0.001,
+      "display_max": 0.12072,
+      "has_negative": false,
+      "files": {
+        "pos": "maps/anger_pos.nii.gz",
+        "neg": null
+      }
+    },
+    {
+      "id": "disgust",
+      "label": "Disgust",
+      "group": "emotion",
+      "study_id": "wager2015",
+      "citation": "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066.",
+      "doi": "10.1371/journal.pcbi.1004066",
+      "n_studies": 148,
+      "method": "Bayesian spatial point process (BSPP) coordinate-based meta-analysis",
+      "value_meaning": "posterior expected number of activation centres",
+      "threshold": 0.001,
+      "threshold_type": "display-only",
+      "threshold_label": "display threshold chosen by the authors — not a significance test",
+      "licence": "GPL-3.0 (CANlab repository); article CC-BY 4.0",
+      "caveat": "TODO-caveat",
+      "display_min": 0.001,
+      "display_max": 0.094538,
+      "has_negative": false,
+      "files": {
+        "pos": "maps/disgust_pos.nii.gz",
+        "neg": null
+      }
+    },
+    {
+      "id": "fear",
+      "label": "Fear",
+      "group": "emotion",
+      "study_id": "wager2015",
+      "citation": "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066.",
+      "doi": "10.1371/journal.pcbi.1004066",
+      "n_studies": 148,
+      "method": "Bayesian spatial point process (BSPP) coordinate-based meta-analysis",
+      "value_meaning": "posterior expected number of activation centres",
+      "threshold": 0.001,
+      "threshold_type": "display-only",
+      "threshold_label": "display threshold chosen by the authors — not a significance test",
+      "licence": "GPL-3.0 (CANlab repository); article CC-BY 4.0",
+      "caveat": "TODO-caveat",
+      "display_min": 0.001,
+      "display_max": 0.087703,
+      "has_negative": false,
+      "files": {
+        "pos": "maps/fear_pos.nii.gz",
+        "neg": null
+      }
+    },
+    {
+      "id": "happiness",
+      "label": "Happiness",
+      "group": "emotion",
+      "study_id": "wager2015",
+      "citation": "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066.",
+      "doi": "10.1371/journal.pcbi.1004066",
+      "n_studies": 148,
+      "method": "Bayesian spatial point process (BSPP) coordinate-based meta-analysis",
+      "value_meaning": "posterior expected number of activation centres",
+      "threshold": 0.001,
+      "threshold_type": "display-only",
+      "threshold_label": "display threshold chosen by the authors — not a significance test",
+      "licence": "GPL-3.0 (CANlab repository); article CC-BY 4.0",
+      "caveat": "TODO-caveat",
+      "display_min": 0.001,
+      "display_max": 0.070508,
+      "has_negative": false,
+      "files": {
+        "pos": "maps/happiness_pos.nii.gz",
+        "neg": null
+      }
+    },
+    {
+      "id": "sadness",
+      "label": "Sadness",
+      "group": "emotion",
+      "study_id": "wager2015",
+      "citation": "Wager TD, Kang J, Johnson TD, Nichols TE, Satpute AB, Barrett LF (2015). A Bayesian model of category-specific emotional brain responses. PLoS Comput Biol 11(4):e1004066.",
+      "doi": "10.1371/journal.pcbi.1004066",
+      "n_studies": 148,
+      "method": "Bayesian spatial point process (BSPP) coordinate-based meta-analysis",
+      "value_meaning": "posterior expected number of activation centres",
+      "threshold": 0.001,
+      "threshold_type": "display-only",
+      "threshold_label": "display threshold chosen by the authors — not a significance test",
+      "licence": "GPL-3.0 (CANlab repository); article CC-BY 4.0",
+      "caveat": "TODO-caveat",
+      "display_min": 0.001,
+      "display_max": 0.077706,
+      "has_negative": false,
+      "files": {
+        "pos": "maps/sadness_pos.nii.gz",
+        "neg": null
+      }
+    }
+  ],
+  "unavailable": [
+    {
+      "id": "anxiety",
+      "label": "Anxiety",
+      "reason": "source not yet verified"
+    },
+    {
+      "id": "retrieval",
+      "label": "Retrieval",
+      "reason": "source not yet verified"
+    }
+  ]
+}

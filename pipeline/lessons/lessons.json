@@ -1,0 +1,10 @@
+{
+  "reviewed": false,
+  "lessons": [
+    {"id": "reading-maps", "title": "Reading a meta-analytic map", "map_ids": ["fear"], "view": "overlay", "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []},
+    {"id": "five-emotions", "title": "Five emotions, one brain", "map_ids": ["anger", "disgust", "fear", "happiness", "sadness"], "view": "both", "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []},
+    {"id": "fear-vs-anxiety", "title": "Fear vs anxiety", "map_ids": ["fear", "anxiety"], "view": "both", "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []},
+    {"id": "retrieval-dmn", "title": "Memory retrieval and the default mode network", "map_ids": ["retrieval"], "view": "both", "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []},
+    {"id": "fear-vs-retrieval", "title": "Fear vs retrieval", "map_ids": ["fear", "retrieval"], "view": "both", "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []}
+  ]
+}

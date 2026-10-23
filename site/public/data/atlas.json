@@ -1,0 +1,66 @@
+{
+  "labels": {
+    "1": {
+      "name": "Visual",
+      "displayable": true
+    },
+    "2": {
+      "name": "Somatomotor",
+      "displayable": true
+    },
+    "3": {
+      "name": "Dorsal attention",
+      "displayable": true
+    },
+    "4": {
+      "name": "Ventral attention/salience",
+      "displayable": true
+    },
+    "5": {
+      "name": "Limbic",
+      "displayable": true
+    },
+    "6": {
+      "name": "Frontoparietal control",
+      "displayable": true
+    },
+    "7": {
+      "name": "Default mode",
+      "displayable": true
+    },
+    "8": {
+      "name": "Amygdala",
+      "displayable": false
+    },
+    "9": {
+      "name": "Hippocampus",
+      "displayable": false
+    },
+    "10": {
+      "name": "Thalamus",
+      "displayable": false
+    },
+    "11": {
+      "name": "Brainstem",
+      "displayable": false
+    }
+  },
+  "sources": [
+    {
+      "name": "Yeo 2011 7-network parcellation (CBIG split components)",
+      "citation": "Yeo BTT et al. (2011) J Neurophysiol 106:1125–1165. doi:10.1152/jn.00338.2011",
+      "licence": "MIT (CBIG)",
+      "bundled": true
+    },
+    {
+      "name": "Harvard–Oxford subcortical atlas (maxprob thr25, via TemplateFlow)",
+      "citation": "Desikan RS et al. (2006) NeuroImage 31:968–980; FSL atlases",
+      "licence": "FSL licence (non-commercial)",
+      "bundled": false
+    }
+  ],
+  "template": {
+    "name": "MNI ICBM152 non-linear 2009 template (bundled with nilearn), resampled to FSL 2 mm grid",
+    "licence": "MNI template licence (permissive, copyright McConnell Brain Imaging Centre)"
+  }
+}
