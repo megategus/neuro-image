@@ -63,3 +63,13 @@ def test_report_is_json_serialisable():
     from dataclasses import asdict
 
     json.dumps(asdict(verify(make_img(SHAPE, MNI_2MM, _positive()))))
+
+
+def test_brain_mask_excludes_outside_zeros():
+    d = np.zeros(SHAPE)
+    mask = np.zeros(SHAPE)
+    mask[:, :, :46] = 1  # first ~half of voxels are "brain"
+    d[mask > 0] = np.random.default_rng(1).uniform(0.5, 5.0, int(mask.sum()))
+    img = make_img(SHAPE, MNI_2MM, d)
+    assert verify(img).is_thresholded is True
+    assert verify(img, brain_mask=make_img(SHAPE, MNI_2MM, mask)).is_thresholded is False

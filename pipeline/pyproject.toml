@@ -5,6 +5,7 @@ description = "Data pipeline for the brain condition atlas"
 requires-python = ">=3.11"
 dependencies = [
     "nibabel>=5.4.2",
+    "nilearn>=0.14.1",
     "numpy>=2.4.6",
     "pyyaml",
 ]

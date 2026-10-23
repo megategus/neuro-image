@@ -47,13 +47,23 @@ def _is_mni(img: nib.Nifti1Image) -> bool:
     return True
 
 
-def verify(img: nib.Nifti1Image) -> VerificationReport:
+def _mask_on_grid(mask: nib.Nifti1Image, img: nib.Nifti1Image) -> np.ndarray:
+    if mask.shape[:3] != img.shape[:3] or not np.allclose(mask.affine, img.affine):
+        from nilearn.image import resample_to_img
+
+        mask = resample_to_img(mask, img, interpolation="nearest")
+    return np.asarray(mask.dataobj) > 0
+
+
+def verify(img: nib.Nifti1Image, brain_mask: nib.Nifti1Image | None = None) -> VerificationReport:
     """Check shape, space, sign and thresholding of a candidate map.
 
-    "In-brain voxels" are all finite voxels (no mask is available); the
-    thresholded heuristic is: more than 30% of them exactly zero while the
-    smallest non-zero absolute value is > 0 (always true, so the reported
-    ``min`` is what the human judges). NaNs are reported but do not fail.
+    In-brain voxels are those with ``brain_mask > 0`` (the mask is resampled
+    to the image grid with nearest neighbour unless shape and affine already
+    match); without a mask they are all finite voxels. The thresholded
+    heuristic: more than 30% of in-brain voxels exactly zero. ``min``/``max``
+    are over the absolute values of non-zero finite voxels. NaNs are
+    reported but do not fail.
     """
     shape = tuple(int(n) for n in img.shape)
     zooms = tuple(float(z) for z in img.header.get_zooms()[: len(shape)])
@@ -76,9 +86,12 @@ def verify(img: nib.Nifti1Image) -> VerificationReport:
         vmin = vmax = float("nan")
         thresholded = False
     else:
-        vmin, vmax = float(nonzero.min()), float(nonzero.max())
-        zero_frac = 1.0 - nonzero.size / vals.size
-        thresholded = bool(zero_frac > _THRESHOLDED_ZERO_FRACTION and np.abs(nonzero).min() > 0)
+        absnz = np.abs(nonzero)
+        vmin, vmax = float(absnz.min()), float(absnz.max())
+        inbrain = finite if brain_mask is None else finite & _mask_on_grid(brain_mask, img)
+        n_in = int(inbrain.sum())
+        zero_frac = float((data[inbrain] == 0).mean()) if n_in else 0.0
+        thresholded = zero_frac > _THRESHOLDED_ZERO_FRACTION
     has_negative = bool((nonzero < 0).any())
     ok = is_mni and nonzero.size > 0
     return VerificationReport(ok, shape, zooms, is_mni, has_negative, thresholded, vmin, vmax, problems)
