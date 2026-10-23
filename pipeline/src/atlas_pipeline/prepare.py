@@ -1,6 +1,7 @@
 """Put source maps on the common MNI152 2 mm grid and split them by sign."""
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import nibabel as nib
@@ -37,9 +38,14 @@ def _same_grid(a: nib.Nifti1Image, b: nib.Nifti1Image) -> bool:
 def _resample(img: nib.Nifti1Image, target: nib.Nifti1Image) -> nib.Nifti1Image:
     # force_resample/copy_header opt in to nilearn's future defaults, which avoids
     # its FutureWarning without hiding warnings globally.
-    return resample_to_img(
-        img, target, interpolation="continuous", force_resample=True, copy_header=True
-    )
+    # A sign part that happens to hold only 0/1 trips nilearn's binary-image
+    # warning; continuous interpolation is the deliberate choice here, so that one
+    # message is silenced locally (not globally).
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Resampling binary images")
+        return resample_to_img(
+            img, target, interpolation="continuous", force_resample=True, copy_header=True
+        )
 
 
 def background_template(target: nib.Nifti1Image) -> nib.Nifti1Image:
@@ -54,25 +60,39 @@ def _as_img(data: np.ndarray, target: nib.Nifti1Image) -> nib.Nifti1Image:
     return img
 
 
+def _part(data: np.ndarray, like: nib.Nifti1Image, target: nib.Nifti1Image, regrid: bool) -> np.ndarray:
+    """One sign part (non-negative) on the target grid; clipped to remove spline ringing."""
+    if not regrid:
+        return data
+    out = _resample(nib.Nifti1Image(data, like.affine), target)
+    return np.clip(np.asarray(out.get_fdata(), dtype=np.float32), 0.0, None)
+
+
 def prepare(source: Source, img: nib.Nifti1Image, target: nib.Nifti1Image) -> PreparedMap:
-    if not _same_grid(img, target):
-        img = _resample(img, target)
-    data = np.nan_to_num(np.asarray(img.get_fdata(), dtype=np.float32))
+    regrid = not _same_grid(img, target)
+    raw = np.asarray(img.get_fdata(), dtype=np.float32)
+    raw = np.where(np.isfinite(raw), raw, 0.0).astype(np.float32)
 
-    if source.threshold_type == "statistical" and source.threshold is not None:
-        data = np.where(np.abs(data) < source.threshold, 0.0, data)
+    # Split by sign on the source grid, then resample each part: resampling a
+    # signed or positive-only map directly would create spurious negatives.
+    pos = _part(np.where(raw > 0, raw, 0.0).astype(np.float32), img, target, regrid)
+    has_neg = bool((raw < 0).any())
+    neg = _part(np.where(raw < 0, -raw, 0.0).astype(np.float32), img, target, regrid) if has_neg else None
 
-    pos = np.where(data > 0, data, 0.0)
-    neg = np.where(data < 0, -data, 0.0)
+    threshold = source.threshold if source.threshold is not None else 0.0
+    if source.threshold_type == "statistical":
+        pos = np.where(pos < threshold, 0.0, pos)
+        if neg is not None:
+            neg = np.where(neg < threshold, 0.0, neg)
 
-    display_min = float(source.threshold or 0)
+    display_min = float(threshold)
     nonzero = pos[pos > 0]
     display_max = float(np.percentile(nonzero, 99.9)) if nonzero.size else display_min
 
     return PreparedMap(
         source=source,
         positive=_as_img(pos, target),
-        negative=_as_img(neg, target) if neg.any() else None,
+        negative=_as_img(neg, target) if neg is not None and neg.any() else None,
         display_min=display_min,
         display_max=display_max,
     )

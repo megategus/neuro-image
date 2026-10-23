@@ -129,3 +129,41 @@ def test_real_wager_fear_map():
     assert p.positive.shape == SHAPE
     assert p.negative is None
     assert p.display_min == 0.001
+
+
+def _aff3():
+    return np.array([[-3, 0, 0, 90], [0, 3, 0, -126], [0, 0, 3, -72], [0, 0, 0, 1]], float)
+
+
+def test_positive_only_3mm_has_no_spurious_negatives():
+    d = np.zeros((61, 73, 61), dtype=np.float32)
+    d[20:30, 30:40, 20:30] = 2.5
+    p = prepare(_source(threshold_type="none", threshold=None), make_img(d.shape, _aff3(), d), target_grid())
+    assert p.negative is None
+    assert p.positive.get_fdata().min() >= 0
+
+
+def test_nan_inf_in_3mm_source_is_ignored():
+    d = np.zeros((61, 73, 61), dtype=np.float32)
+    d[20:30, 30:40, 20:30] = 2.5
+    d[25, 35, 25] = np.nan
+    d[26, 35, 25] = np.inf
+    p = prepare(_source(threshold_type="none", threshold=None), make_img(d.shape, _aff3(), d), target_grid())
+    assert np.isfinite(p.positive.get_fdata()).all()
+    assert p.positive.get_fdata().max() > 0
+
+
+def test_signed_3mm_negative_part_survives():
+    d = np.zeros((61, 73, 61), dtype=np.float32)
+    d[10:16, 10:16, 10:16] = -3.0
+    d[30:36, 30:36, 30:36] = 4.0
+    p = prepare(_source(threshold_type="statistical", threshold=1.0), make_img(d.shape, _aff3(), d), target_grid())
+    assert p.negative is not None and p.negative.get_fdata().max() > 2
+    assert p.positive.get_fdata().max() > 3
+
+
+def test_binary_valued_3mm_source_is_warning_free():
+    d = np.zeros((61, 73, 61), dtype=np.float32)
+    d[20:30, 30:40, 20:30] = 1.0
+    p = prepare(_source(threshold_type="none", threshold=None), make_img(d.shape, _aff3(), d), target_grid())
+    assert p.positive.get_fdata().max() > 0
