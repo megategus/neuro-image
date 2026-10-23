@@ -10,7 +10,9 @@ from pathlib import Path
 import nibabel as nib
 import numpy as np
 
-from .fetch import download
+from nibabel.filebasedimages import ImageFileError
+
+from .fetch import FetchError, download
 from .verify import verify
 
 
@@ -26,8 +28,11 @@ def _load_mask():
     try:
         if not dest.exists():
             download(MASK_URL, dest)
-        return nib.load(dest)
+        loaded = nib.load(dest)
+        return nib.Nifti1Image(np.asarray(loaded.dataobj), loaded.affine)  # eager: catches corruption
     except Exception as e:  # FetchError, corrupt file, ...
+        if dest.exists():
+            dest.unlink(missing_ok=True)  # drop a bad cached mask so the next run re-downloads
         print(f"warning: brain mask unavailable ({e}); thresholded check uses all finite voxels", file=sys.stderr)
         return None
 
@@ -45,5 +50,10 @@ def inspect(target: str) -> dict:
 
 
 def run(target: str) -> int:
-    print(json.dumps(inspect(target), indent=2))
+    try:
+        report = inspect(target)
+    except (FetchError, FileNotFoundError, ImageFileError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    print(json.dumps(report, indent=2))
     return 0

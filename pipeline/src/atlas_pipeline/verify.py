@@ -23,8 +23,8 @@ class VerificationReport:
     is_mni: bool
     has_negative: bool
     is_thresholded: bool
-    min: float
-    max: float
+    min: float | None
+    max: float | None
     problems: list[str] = field(default_factory=list)
 
 
@@ -70,7 +70,7 @@ def verify(img: nib.Nifti1Image, brain_mask: nib.Nifti1Image | None = None) -> V
     problems: list[str] = []
     if len(shape) != 3:
         problems.append("4D image: choose a volume")
-        return VerificationReport(False, shape, zooms, False, False, False, float("nan"), float("nan"), problems)
+        return VerificationReport(False, shape, zooms, False, False, False, None, None, problems)
 
     data = np.asarray(img.dataobj, dtype=np.float64)
     finite = np.isfinite(data)
@@ -83,7 +83,7 @@ def verify(img: nib.Nifti1Image, brain_mask: nib.Nifti1Image | None = None) -> V
         problems.append("not in MNI152 space (axes must be RAS/LAS and corners within MNI bounds +3 mm)")
     if nonzero.size == 0:
         problems.append("no non-zero values")
-        vmin = vmax = float("nan")
+        vmin = vmax = None
         thresholded = False
     else:
         absnz = np.abs(nonzero)
