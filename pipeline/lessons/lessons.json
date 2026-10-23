@@ -7,15 +7,16 @@
       "map_ids": ["fear"],
       "view": "overlay",
       "body": [
-        "This is not a picture of a brain at work. It is a statistical summary of 148 published PET and fMRI studies of five emotions (Wager et al., 2015), built from the peak coordinates those studies reported.",
-        "Each voxel holds the model's \"posterior expected number of activation centres\": added up over a region, it estimates how many consistently reported activation sites fall there when a study targets fear. It is not a signal strength, a percentage or a p-value.",
-        "The default cut of 0.001 is the value the authors used to draw their figures. It is a display choice, not a significance test: no voxel in this map has been tested and found \"significant\".",
-        "At that cut each of the five emotion maps colours roughly a third to a half of the brain (34–55%), so colour alone says little. Look at where values are highest, and at how the picture changes as you move the cut.",
-        "The studies compared an emotion condition with a neutral or less intense one, and the model uses only the reported peaks of increases. Decreases therefore cannot appear on this map; their absence is not a finding."
+        "This is not a picture of a brain at work but a statistical summary of 148 published PET and fMRI studies of five emotions (Wager et al., 2015), built from the peak coordinates those studies reported.",
+        "Each voxel holds the model's expected number of activation (population) centres: summed over a region, it gives the expected number of such centres there for studies of fear, not a signal strength or a p-value.",
+        "The default cut of 0.001 is the value the authors chose for drawing their figures, not a significance test, and at that cut each emotion map colours a third to over half of the brain (34–55%).",
+        "The model counts reported peaks from emotion-versus-comparison contrasts and has no negative values, so this map cannot show decreases; their absence is not a finding.",
+        "The studies used varied tasks and stimuli, and regions that are hard to image, such as the brainstem and ventromedial prefrontal cortex, are probably under-represented."
       ],
-      "notice": "Move the Display cut slider up from 0.001, then tick \"show unthresholded\". The data never change, only how much of them you choose to see. Which regions stay coloured longest?",
+      "notice": "Move the Display cut slider up from 0.001, then tick \"show unthresholded\": which regions stay coloured longest?",
       "claims": [
-        {"text": "The five emotion maps come from a Bayesian meta-analysis of 148 studies; each map shows the expected number of activation centres per voxel and was thresholded at 0.001 for display only.", "source_doi": "10.1371/journal.pcbi.1004066"}
+        {"text": "The five emotion maps come from a Bayesian meta-analysis of 148 studies; each map shows the expected number of activation centres per voxel and was thresholded at 0.001 for display only.", "source_doi": "10.1371/journal.pcbi.1004066"},
+        {"text": "The brainstem and ventromedial prefrontal cortex are likely to be under-represented in these results.", "source_doi": "10.1371/journal.pcbi.1004066"}
       ]
     },
     {
@@ -25,16 +26,18 @@
       "view": "both",
       "body": [
         "All five maps come from the same model and use the same units, so here, and only here, they share one colour scale.",
-        "Start with the overlap. The authors report that regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotion categories.",
-        "The network profile shows the same thing: every emotion puts some of its map intensity into each of the seven cortical networks, and the amygdala stands out for all five, not just fear. Relative to its size, it holds about 8 to 18 times the average density of the labelled regions (\"Relative to region size\" view).",
-        "What separates the emotions is the pattern across networks. No emotion mapped onto a single cortical network; anger and fear leaned towards the dorsal attention, frontoparietal and default mode networks, while disgust, sadness and happiness leaned towards the ventral attention (salience) and somatomotor networks.",
-        "An earlier meta-analytic review reached the same headline: no consistent one-region-per-emotion mapping (Lindquist et al., 2012)."
+        "The authors report that regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotions, though with different and meaningful distributions within each region.",
+        "In the \"Relative to region size\" view the amygdala has the highest value for all five emotions (about 8 to 18 times the average density), but this means many studies reported peaks there, and dividing by the size of a small structure inflates the number; it does not mean that emotion happens there.",
+        "The authors also warn that amygdala values for negative emotions may be over-represented because the field has focused on fear.",
+        "Every emotion places some intensity in all seven cortical networks, and about 42–48% of each map lies outside the labelled regions, for example in white matter, cerebellum and basal ganglia.",
+        "No emotion mapped onto a single cortical network, and an earlier review found no consistent one-region-per-emotion mapping (Lindquist et al., 2012)."
       ],
-      "notice": "Show fear alone, then add the other four. Is there any coloured region that belongs to fear and to nothing else? Then switch the profile to \"Relative to region size\" and compare the amygdala bars across all five emotions.",
+      "notice": "Show fear alone, then add the other four: is any coloured region fear's alone?",
       "claims": [
         {"text": "Emotion categories were not contained within any one region or system, but were represented as configurations across multiple brain networks.", "source_doi": "10.1371/journal.pcbi.1004066"},
-        {"text": "Limbic and paralimbic regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotion categories.", "source_doi": "10.1371/journal.pcbi.1004066"},
-        {"text": "No emotion category mapped to any single cortical network; anger and fear shared one cortical profile, and disgust, sadness and happiness another.", "source_doi": "10.1371/journal.pcbi.1004066"},
+        {"text": "Limbic and paralimbic regions such as the amygdala, insula, anterior cingulate cortex and brainstem were likely to be active in all five emotion categories, though with different and meaningful distributions within each region.", "source_doi": "10.1371/journal.pcbi.1004066"},
+        {"text": "Amygdala activation intensity for negative emotions may be over-represented, given the field's theoretical focus on fear.", "source_doi": "10.1371/journal.pcbi.1004066"},
+        {"text": "No emotion category mapped to any single cortical network; categories differed in their profiles across networks.", "source_doi": "10.1371/journal.pcbi.1004066"},
         {"text": "A meta-analytic review found no consistent mapping of each emotion to a single brain region.", "source_doi": "10.1017/S0140525X11000446"}
       ]
     },
@@ -46,11 +49,11 @@
       "body": [
         "Anxiety appears here not as a sixth basic emotion but as a contrast with fear.",
         "In the usual research framing, fear is the response to a threat that is present and identifiable; anxiety is a more sustained apprehension about a threat that is uncertain or not yet here, such as waiting for a shock that may or may not come.",
-        "The two maps come from different studies with different methods, so they never share a colour scale. Compare them through their network profiles, which show where each map's evidence lies, not how strong it is.",
-        "Even the fear map alone spreads well beyond the amygdala: about 6% of its total intensity lies in the amygdala, against about 12% in the default mode network and 13% in the visual network (\"Share of evidence\" view).",
+        "The two maps come from different studies with different methods, so they never share a colour scale; compare their network profiles, which show where each map's evidence lies, not how strong it is.",
+        "Even the fear map lies mostly outside the amygdala: about 94% of its intensity falls elsewhere (\"Share of evidence\" view), although relative to its size the amygdala is far denser than, for example, the default mode network (about 18 against about 1, \"Relative to region size\" view).",
         "Look for parts of the two profiles that are shared and parts that differ, rather than for one region that separates the two states."
       ],
-      "notice": "In the \"Relative to region size\" view, compare the amygdala bar for fear and anxiety, then the seven cortical networks. Where do the two profiles agree, and where do they part?",
+      "notice": "In the \"Relative to region size\" view, where do the fear and anxiety profiles agree, and where do they part?",
       "claims": [
         {"text": "Emotion categories, fear included, were not contained within any one region or system, but were represented as configurations across multiple brain networks.", "source_doi": "10.1371/journal.pcbi.1004066"},
         {"text": "A meta-analytic review found no consistent mapping of each emotion to a single brain region.", "source_doi": "10.1017/S0140525X11000446"}
@@ -64,11 +67,11 @@
       "body": [
         "Episodic memory retrieval means bringing back a specific past event: what happened, where and when.",
         "Retrieval is generally reported to engage the hippocampus together with regions of the default mode network, such as the posterior cingulate cortex and precuneus, medial prefrontal cortex and lateral parietal cortex.",
-        "The default mode network is a set of regions that are typically more active at rest than during many outward-focused tasks. It is not a memory network: the emotion meta-analysis notes it is also engaged in semantic memory, thinking about other people, imagining the future and emotion.",
-        "The hippocampus is small, so in the \"Share of evidence\" view its bar looks short even when its evidence is dense. The \"Relative to region size\" view corrects for size.",
+        "The default mode network is not only a memory network: the emotion meta-analysis describes it as consistently engaged in semantic memory, person perception, imagining the future and emotion.",
+        "The hippocampus is small, so judge it in the \"Relative to region size\" view rather than by the length of its \"Share of evidence\" bar.",
         "Like every map here, this one is a statistical result with its own method and threshold; read the info panel before reading the colours."
       ],
-      "notice": "Compare the default mode bar with the other six networks, then check the hippocampus in the \"Relative to region size\" view. Is the evidence for retrieval confined to either?",
+      "notice": "Is the evidence for retrieval confined to the default mode network or to the hippocampus?",
       "claims": [
         {"text": "The default mode network is consistently engaged during conceptual processes such as semantic memory, person perception and prospection about future events, as well as in emotion.", "source_doi": "10.1371/journal.pcbi.1004066"}
       ]
@@ -79,13 +82,13 @@
       "map_ids": ["fear", "retrieval"],
       "view": "both",
       "body": [
-        "The amygdala and the hippocampus lie side by side in the medial temporal lobe. Being neighbours does not mean doing the same thing, and neither structure does only one thing.",
+        "The amygdala lies just anterior to the hippocampal head in the medial temporal lobe; being neighbours does not mean doing the same thing, and neither structure does only one thing.",
         "The fear map already reaches the hippocampus: relative to its size, the hippocampus holds about 4 times the average density of the labelled regions in the fear profile, second only to the amygdala at about 18 (\"Relative to region size\" view).",
-        "Fear also places about 12% of its map intensity in the default mode network (\"Share of evidence\" view), a network that is generally reported to be engaged during memory retrieval as well.",
+        "Fear also places about 12% of its map intensity in the default mode network, roughly what that network's size alone would predict (about 1 in the \"Relative to region size\" view); that network is generally reported to be engaged during memory retrieval too.",
         "The two maps come from different studies and methods, so compare their profiles, not their colours; the profiles show where the evidence lies, not how strong it is.",
         "Ask whether the two conditions differ in which regions they use at all, or in how their evidence is weighted across the same networks."
       ],
-      "notice": "In the \"Relative to region size\" view, compare the amygdala and hippocampus bars for fear and for retrieval, then the default mode bar. Which differences are about structures, and which about weighting?",
+      "notice": "In the \"Relative to region size\" view, compare the amygdala, hippocampus and default mode bars for fear and for retrieval.",
       "claims": [
         {"text": "The hippocampus was among the regions engaged across emotion categories, and hippocampal profiles helped distinguish fear from anger.", "source_doi": "10.1371/journal.pcbi.1004066"},
         {"text": "The default mode network is consistently engaged during conceptual processes such as semantic memory, person perception and prospection about future events, as well as in emotion.", "source_doi": "10.1371/journal.pcbi.1004066"}
