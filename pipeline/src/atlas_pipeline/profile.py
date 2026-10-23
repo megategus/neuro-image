@@ -33,17 +33,25 @@ def compute_profile(pm: PreparedMap, atlas: ReferenceAtlas) -> Profile:
 
     labelled = sum(int((lab == k).sum()) for k in atlas.labels)
     share: dict[str, float] = {}
-    size_norm: dict[str, float] = {}
+    counts: dict[str, int] = {}
     for k, name in atlas.labels.items():
         mask = lab == k
         share[name] = float(values[mask].sum()) / total
         n = int(mask.sum())
         if n > 0:
-            size_norm[name] = share[name] / (n / labelled)
+            counts[name] = n
+    unassigned = max(0.0, 1.0 - sum(share.values()))
+    in_labels = 1.0 - unassigned
+    if in_labels <= 0:
+        raise ValueError(f"map {pm.source.id!r} has no signal inside the atlas labels")
+    # Density relative to the labelled atlas only (excludes signal outside labels).
+    size_norm = {
+        name: (share[name] / in_labels) / (counts[name] / labelled) for name in counts
+    }
     return Profile(
         map_id=pm.source.id,
         quantity=quantity,
         share=share,
         size_normalised=size_norm,
-        unassigned=max(0.0, 1.0 - sum(share.values())),
+        unassigned=unassigned,
     )

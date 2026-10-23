@@ -88,3 +88,26 @@ def test_zero_voxel_region_is_omitted():
 def test_empty_map_raises():
     with pytest.raises(ValueError):
         compute_profile(_pm(np.zeros(SHAPE), "display-only"), _atlas())
+
+
+def test_size_normalised_ignores_unlabelled_signal():
+    # Atlas labels only half the volume; uniform map -> density 1.0 everywhere.
+    p = compute_profile(_pm(np.ones(SHAPE), "display-only"), _half_atlas())
+    assert p.unassigned == pytest.approx(0.5)
+    for name in ("A", "B"):
+        assert p.size_normalised[name] == pytest.approx(1.0)
+
+
+def test_no_signal_inside_labels_raises():
+    data = np.zeros(SHAPE)
+    data[3, 0, 0] = 1.0  # unlabelled voxel only
+    with pytest.raises(ValueError):
+        compute_profile(_pm(data, "display-only"), _atlas())
+
+
+def _half_atlas():
+    lab = np.zeros(SHAPE, dtype=np.float32)
+    lab[0, :, :] = 1
+    lab[1, :, :] = 2
+    img = nib.Nifti1Image(lab, np.array(MNI_2MM, dtype=float))
+    return ReferenceAtlas(img=img, labels={1: "A", 2: "B"}, sources=[])
