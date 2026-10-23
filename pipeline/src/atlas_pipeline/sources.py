@@ -26,6 +26,8 @@ class Source:
     threshold_type: Literal["statistical", "display-only", "none"]
     licence: str
     caveat: str
+    # True only once the medical reviewer has approved `caveat` (deploy gate).
+    caveat_reviewed: bool = False
 
 
 _OPTIONAL = {"sha256", "n_studies", "threshold"}
@@ -57,5 +59,7 @@ def load_sources(path: Path) -> list[Source]:
                 raise ValueError(
                     f"source {sid!r}: field {name!r} must be one of {sorted(allowed)}, got {entry[name]!r}"
                 )
+        if not isinstance(entry["caveat_reviewed"], bool):
+            raise ValueError(f"source {sid!r}: field 'caveat_reviewed' must be true or false")
         sources.append(Source(**{n: entry[n] for n in names}))
     return sources

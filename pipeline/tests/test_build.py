@@ -13,16 +13,25 @@ from atlas_pipeline.prepare import TARGET_AFFINE, TARGET_SHAPE, target_grid
 from atlas_pipeline.sources import Source
 
 ROOT = Path(__file__).resolve().parent.parent
-LESSONS_DOC = {"reviewed": False, "lessons": [
-    {"id": "a", "title": "T", "map_ids": ["fear", "anxiety"], "view": "both",
+LESSONS_DOC = {"lessons": [
+    {"id": "a", "title": "T", "map_ids": ["fear", "anxiety"], "view": "both", "reviewed": False,
      "body": ["TODO-draft"], "notice": "TODO-draft", "claims": []}]}
+
+
+def lessons_file(tmp_path, doc):
+    p = tmp_path / "lessons.json"
+    p.write_text(json.dumps(doc))
+    return p
 
 
 @pytest.fixture
 def LESSONS(tmp_path):
-    p = tmp_path / "lessons.json"
-    p.write_text(json.dumps(LESSONS_DOC))
-    return p
+    return lessons_file(tmp_path, LESSONS_DOC)
+
+
+def fear_lesson(reviewed):
+    return {"id": "f", "title": "Fear", "map_ids": ["fear"], "view": "overlay", "reviewed": reviewed,
+            "body": ["Real text."], "notice": "Look.", "claims": []}
 
 SRC = Source(
     id="fear", label="Fear", group="emotion", study_id="w", url="http://x/fear.nii.gz",
@@ -58,10 +67,18 @@ def fake_atlas(target, cache_dir, bundled=(True, False)):
     )
 
 
-def go(tmp_path, lessons, sources, deploy=False, atlas_fn=fake_atlas, fetch_fn=fake_fetch):
+def fake_mask(cache_dir, region=(slice(30, 60), slice(40, 70), slice(30, 60))):
+    """Brain mask equal to fake_fetch's non-zero block, so that map is not 'thresholded'."""
+    m = np.zeros(TARGET_SHAPE, dtype=np.uint8)
+    m[region] = 1
+    return nib.Nifti1Image(m, TARGET_AFFINE)
+
+
+def go(tmp_path, lessons, sources, deploy=False, atlas_fn=fake_atlas, fetch_fn=fake_fetch,
+       mask_fn=fake_mask):
     out = tmp_path / "out"
     problems = run_build(sources, lessons, out, tmp_path / "cache", deploy=deploy,
-                         fetch_fn=fetch_fn, atlas_fn=atlas_fn)
+                         fetch_fn=fetch_fn, atlas_fn=atlas_fn, mask_fn=mask_fn)
     return problems, out
 
 
@@ -91,8 +108,10 @@ def test_outputs(tmp_path, LESSONS):
     atlas = json.loads((out / "atlas.json").read_text())
     assert atlas["labels"]["8"] == {"name": "Amygdala", "displayable": False}
     assert atlas["labels"]["1"]["displayable"] is True
-    assert atlas["template"]["licence"].startswith("MNI template licence")
-    assert (out / "lessons.json").exists()
+    assert atlas["template"]["licence"].startswith("MNI ICBM152 licence")
+    assert "Louis Collins" in atlas["template"]["notice"]
+    assert m["caveat_reviewed"] is False
+    assert json.loads((out / "lessons.json").read_text())["lessons"][0]["reviewed"] is False
 
 
 def test_atlas_file_has_only_bundled_labels(tmp_path, LESSONS):
@@ -116,6 +135,73 @@ def test_deploy_fails_on_todo_caveat_and_unreviewed(tmp_path, LESSONS):
     assert "caveat" in text and "reviewed" in text
 
 
+def test_deploy_blocks_unreviewed_lesson_whose_maps_are_all_available(tmp_path):
+    src = replace(SRC, caveat="Real caveat.", caveat_reviewed=True)
+    les = lessons_file(tmp_path, {"lessons": [fear_lesson(False)]})
+    problems, _ = go(tmp_path, les, [src, UNVERIFIED], deploy=True)
+    assert len(problems) == 1 and "'f'" in problems[0] and "not yet medically reviewed" in problems[0]
+
+
+def test_deploy_ignores_unreviewed_lesson_needing_unverified_map(tmp_path):
+    src = replace(SRC, caveat="Real caveat.", caveat_reviewed=True)
+    les = lessons_file(tmp_path, {"lessons": [
+        fear_lesson(True),
+        {**fear_lesson(False), "id": "g", "map_ids": ["fear", "anxiety"]},
+    ]})
+    problems, _ = go(tmp_path, les, [src, UNVERIFIED], deploy=True)
+    assert problems == []
+
+
+def test_deploy_blocks_unreviewed_caveat_of_verified_source_only(tmp_path):
+    les = lessons_file(tmp_path, {"lessons": [fear_lesson(True)]})
+    src = replace(SRC, caveat="Real caveat.", caveat_reviewed=False)
+    problems, _ = go(tmp_path, les, [src, UNVERIFIED], deploy=True)  # UNVERIFIED is also unreviewed
+    assert problems == ["map 'fear': caveat not yet medically reviewed "
+                        "(set caveat_reviewed: true in sources.yaml after review)"]
+    problems, _ = go(tmp_path, les, [replace(src, caveat_reviewed=True), UNVERIFIED], deploy=True)
+    assert problems == []
+
+
+def test_pre_thresholded_map_without_statistical_threshold_is_build_error(tmp_path, LESSONS):
+    big = (slice(10, 80), slice(10, 100), slice(10, 80))  # fake map is zero in most of this mask
+    problems, out = go(tmp_path, LESSONS, [SRC, UNVERIFIED], mask_fn=lambda c: fake_mask(c, big))
+    assert any("fear" in p and "pre-thresholded" in p for p in problems)
+    assert json.loads((out / "maps.json").read_text())["maps"] == []
+    none_src = replace(SRC, threshold_type="none", threshold=None)
+    problems, _ = go(tmp_path, LESSONS, [none_src, UNVERIFIED], mask_fn=lambda c: fake_mask(c, big))
+    assert any("pre-thresholded" in p for p in problems)
+    stat = replace(SRC, threshold_type="statistical", threshold=0.05)
+    problems, _ = go(tmp_path, LESSONS, [stat, UNVERIFIED], mask_fn=lambda c: fake_mask(c, big))
+    assert problems == []
+
+
+def test_missing_brain_mask_is_build_error(tmp_path, LESSONS):
+    def no_mask(cache_dir):
+        raise OSError("offline")
+    problems, _ = go(tmp_path, LESSONS, [SRC, UNVERIFIED], mask_fn=no_mask)
+    assert any(p.startswith("brain mask:") for p in problems)
+
+
+def test_notices_file_lists_sources_and_licence_texts(tmp_path, LESSONS):
+    from atlas_pipeline.atlas import SOURCES
+    problems, out = go(tmp_path, LESSONS, [SRC, UNVERIFIED],
+                       atlas_fn=lambda t, c: replace(fake_atlas(t, c), sources=[dict(s) for s in SOURCES]))
+    assert problems == []
+    text = (out / "NOTICES.txt").read_text()
+    assert "https://github.com/megategus/neuro-image" in text
+    assert "gpl-3.0" in text
+    assert "Fear:" in text and "doi:10.1/x" in text and "Licence: l" in text
+    assert "Copyright (C) 1993-2004 Louis Collins" in text
+    assert "provided that the above copyright notice appear in all copies" in text
+    assert "Copyright (c) 2016 Computational Brain Imaging Group (CBIG)" in text
+    assert "The above copyright notice and this permission notice shall be included" in text
+    assert "Harvard" in text and "not distributed" in text
+
+
+def test_default_out_is_anchored_to_repo():
+    assert build_mod.DEFAULT_OUT == ROOT.parent / "site" / "public" / "data"
+
+
 def test_failed_verification_is_build_error(tmp_path, LESSONS):
     def bad_fetch(source, cache_dir):
         p = Path(cache_dir) / "bad.nii.gz"
@@ -132,6 +218,7 @@ def test_cli_exit_code(tmp_path, monkeypatch, LESSONS):
 
     monkeypatch.setattr(build_mod, "default_fetch", fake_fetch)
     monkeypatch.setattr(build_mod, "default_atlas", fake_atlas)
+    monkeypatch.setattr(build_mod, "default_mask", fake_mask)
     monkeypatch.setattr(build_mod, "load_sources", lambda p: [SRC, UNVERIFIED])
     assert main(["build", "--out", str(tmp_path / "o"), "--cache", str(tmp_path / "c"), "--lessons", str(LESSONS)]) == 0
     assert main(["build", "--deploy", "--out", str(tmp_path / "o"), "--cache", str(tmp_path / "c"), "--lessons", str(LESSONS)]) == 1

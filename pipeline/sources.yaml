@@ -1,3 +1,10 @@
+# Registry of published maps. Field notes:
+# - threshold: in the map's own value units (the number compared with voxel
+#   values), exactly as the authors state it. A p-value stated for a z- or
+#   t-map must first be converted to that map's units; never choose one.
+# - caveat_reviewed: set to true only after the medical reviewer has approved
+#   this source's caveat text. `build --deploy` fails for a verified source
+#   whose caveat is not reviewed.
 sources:
   - id: anger
     label: Anger
@@ -15,6 +22,7 @@ sources:
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
     caveat: "Shows where studies of anger tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to anger; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
   - id: disgust
     label: Disgust
     group: emotion
@@ -31,6 +39,7 @@ sources:
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
     caveat: "Shows where studies of disgust tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to disgust; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
   - id: fear
     label: Fear
     group: emotion
@@ -47,6 +56,7 @@ sources:
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
     caveat: "Shows where studies of fear tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to fear; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the authors warn that amygdala values for negative emotions may be over-represented because the field has focused on fear."
+    caveat_reviewed: false
   - id: happiness
     label: Happiness
     group: emotion
@@ -63,6 +73,7 @@ sources:
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
     caveat: "Shows where studies of happiness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to happiness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases, and the 0.001 cut is a display choice, not a significance test."
+    caveat_reviewed: false
   - id: sadness
     label: Sadness
     group: emotion
@@ -79,6 +90,7 @@ sources:
     threshold_type: display-only
     licence: "GPL-3.0 (CANlab repository); article CC-BY 4.0"
     caveat: "Shows where studies of sadness tended to report activation peaks, as estimated by a statistical model; no single coloured region is specific to sadness; what differs between emotions is the overall pattern. The map has no negative values, so it cannot show decreases; in-scanner sadness tasks are typically low-arousal, so it may not represent intense grief."
+    caveat_reviewed: false
   - id: anxiety
     label: Anxiety
     group: anxiety
@@ -95,6 +107,7 @@ sources:
     threshold_type: none
     licence: "unknown — pending verification"
     caveat: "Anxiety is shown as a contrast with fear (sustained apprehension about uncertain threat), not as a basic emotion; this map does not show anxiety disorders or a region specific to anxiety. Its values come from a different method than the emotion maps, so the two cannot be compared colour for colour."
+    caveat_reviewed: false
   - id: retrieval
     label: Retrieval
     group: retrieval
@@ -111,3 +124,4 @@ sources:
     threshold_type: none
     licence: "unknown — pending verification"
     caveat: "Shows where studies of remembering past events reported increases relative to their control tasks; it does not show where memories are stored, and the regions it highlights are not specific to memory. Its method differs from the emotion maps, so compare it with them only through the network profile."
+    caveat_reviewed: false

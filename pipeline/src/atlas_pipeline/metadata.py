@@ -4,8 +4,7 @@ from __future__ import annotations
 from .sources import Source
 
 DISPLAY_ONLY_LABEL = "display threshold chosen by the authors — not a significance test"
-TODO_CAVEAT = "TODO-caveat"
-TODO_DRAFT = "TODO-draft"
+TODO_MARK = "TODO"  # deploy fails on any text field containing this substring
 VIEWS = {"overlay", "profile", "both"}
 _REQUIRED = ("citation", "doi", "n_studies", "method", "value_meaning",
              "threshold_type", "licence", "caveat")
@@ -33,20 +32,45 @@ def check_completeness(maps: list[dict], for_deploy: bool) -> list[str]:
         for f in fields:
             if _missing(m.get(f)):
                 problems.append(f"map {mid!r}: missing {f}")
-        if for_deploy and m.get("caveat") == TODO_CAVEAT:
-            problems.append(f"map {mid!r}: caveat is still {TODO_CAVEAT}")
+        if for_deploy:
+            for f, v in m.items():
+                if isinstance(v, str) and TODO_MARK in v:
+                    problems.append(f"map {mid!r}: {f} still contains {TODO_MARK}")
+            if m.get("caveat_reviewed") is not True:
+                problems.append(
+                    f"map {mid!r}: caveat not yet medically reviewed "
+                    "(set caveat_reviewed: true in sources.yaml after review)"
+                )
     return problems
 
 
-def validate_lessons(lessons: dict, map_ids: set[str], for_deploy: bool = False) -> list[str]:
-    """Problems in a lessons document. `map_ids` is every source id, built or not."""
+def _texts(les: dict) -> list[str]:
+    out = [les.get("title"), les.get("notice")]
+    out += les.get("body") if isinstance(les.get("body"), list) else []
+    claims = les.get("claims") if isinstance(les.get("claims"), list) else []
+    out += [c.get("text") for c in claims if isinstance(c, dict)]
+    return [t for t in out if isinstance(t, str)]
+
+
+def validate_lessons(
+    lessons: dict,
+    map_ids: set[str],
+    for_deploy: bool = False,
+    available_ids: set[str] | None = None,
+) -> list[str]:
+    """Problems in a lessons document.
+
+    `map_ids` is every source id, built or not. `available_ids` is the set of
+    verified (published) map ids: on deploy, an unreviewed lesson fails only if
+    all of its maps are available, since otherwise the site does not show its
+    text. With `available_ids=None` every known map counts as available.
+    """
     problems: list[str] = []
     if not isinstance(lessons, dict):
         return ["lessons: top level must be an object"]
-    if not isinstance(lessons.get("reviewed"), bool):
-        problems.append("lessons: 'reviewed' must be true or false")
-    elif for_deploy and not lessons["reviewed"]:
-        problems.append("lessons: reviewed is false; lessons must be reviewed before deploy")
+    if "reviewed" in lessons:
+        problems.append("lessons: top-level 'reviewed' is replaced by a 'reviewed' flag on each lesson")
+    available = map_ids if available_ids is None else available_ids
     items = lessons.get("lessons")
     if not isinstance(items, list):
         return problems + ["lessons: 'lessons' must be a list"]
@@ -72,6 +96,15 @@ def validate_lessons(lessons: dict, map_ids: set[str], for_deploy: bool = False)
             for x in ids:
                 if x not in map_ids:
                     problems.append(f"{name}: unknown map id {x!r}")
+        reviewed = les.get("reviewed")
+        if not isinstance(reviewed, bool):
+            problems.append(f"{name}: 'reviewed' must be true or false")
+        elif (for_deploy and not reviewed and isinstance(ids, list) and ids
+              and all(x in available for x in ids)):
+            problems.append(
+                f"{name}: not yet medically reviewed and all its maps are available "
+                "(set \"reviewed\": true on this lesson after review)"
+            )
         if les.get("view") not in VIEWS:
             problems.append(f"{name}: view must be one of {sorted(VIEWS)}")
         body = les.get("body")
@@ -89,8 +122,6 @@ def validate_lessons(lessons: dict, map_ids: set[str], for_deploy: bool = False)
                 problems.append(f"{name}: claim #{j} missing text")
             elif _missing(c.get("source_doi")):
                 problems.append(f"{name}: claim #{j} has no source_doi")
-        if for_deploy:
-            texts = (body if isinstance(body, list) else []) + [notice]
-            if TODO_DRAFT in texts:
-                problems.append(f"{name}: still contains {TODO_DRAFT}")
+        if for_deploy and any(TODO_MARK in t for t in _texts(les)):
+            problems.append(f"{name}: still contains {TODO_MARK} text")
     return problems

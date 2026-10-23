@@ -11,6 +11,7 @@ import numpy as np
 from nilearn.image import resample_to_img
 
 from .fetch import download
+from .notices import CBIG_MIT_NOTICE
 from .prepare import _same_grid
 
 _YEO_DIR = (
@@ -39,8 +40,9 @@ SOURCES = [
     {
         "name": "Yeo 2011 7-network parcellation (CBIG split components)",
         "citation": "Yeo BTT et al. (2011) J Neurophysiol 106:1125–1165. doi:10.1152/jn.00338.2011",
-        "licence": "MIT (CBIG)",
+        "licence": "MIT (CBIG); Copyright (c) 2016 Computational Brain Imaging Group (CBIG)",
         "bundled": True,
+        "notice": CBIG_MIT_NOTICE,
     },
     {
         "name": "Harvard–Oxford subcortical atlas (maxprob thr25, via TemplateFlow)",
