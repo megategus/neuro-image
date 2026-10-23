@@ -44,5 +44,6 @@
 .lesson-notice { border-left: 4px solid #c9a227; background: #fffbe6; padding: .4rem .8rem; }
 .lesson-notice p { margin: .25rem 0 0; }
 .lesson-unavailable { font-style: italic; }
+.lesson-nav { margin: 1rem 0; }
 .lesson-nav button { margin-right: .5rem; padding: .3rem .8rem; }
 .lesson-player { margin-bottom: 1rem; }

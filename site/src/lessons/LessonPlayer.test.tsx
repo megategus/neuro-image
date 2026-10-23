@@ -64,4 +64,15 @@ describe('LessonPlayer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Explore freely' }))
     expect(onExit).toHaveBeenCalled()
   })
+
+  it('calls onUnavailable (not onLoadMaps) when an unavailable lesson becomes current', () => {
+    const onUnavailable = vi.fn()
+    const onLoadMaps = vi.fn()
+    render(<LessonPlayer lessons={file(true)} unavailableIds={['anxiety']} initialIndex={1}
+      onLoadMaps={onLoadMaps} onUnavailable={onUnavailable} onExit={vi.fn()} />)
+    expect(onUnavailable).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+    expect(onUnavailable).toHaveBeenCalledTimes(1)
+    expect(onLoadMaps).toHaveBeenCalledTimes(1)
+  })
 })

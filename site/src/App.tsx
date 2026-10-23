@@ -18,6 +18,7 @@ export default function App() {
   const [mode, setMode] = useState<ProfileMode>('share')
   const [guided, setGuided] = useState(true)
   const [lessonView, setLessonView] = useState<LessonView>('both')
+  const [lessonUnavailable, setLessonUnavailable] = useState(false)
   const [lessonIndex, setLessonIndex] = useState(0)
   const availableIds = data ? data.maps.map((m) => m.id) : []
 
@@ -39,12 +40,18 @@ export default function App() {
   const sliderMax = Math.max(0.001, ...wagerMaps.map((m) => m.display_max))
   const effectiveCut = unthresholded ? UNTHRESHOLDED : cut
 
-  const showOverlay = !guided || lessonView !== 'profile'
-  const showProfile = !guided || lessonView !== 'overlay'
+  const showOverlay = !guided || (!lessonUnavailable && lessonView !== 'profile')
+  const showProfile = !guided || (!lessonUnavailable && lessonView !== 'overlay')
 
   const loadMaps = (ids: string[], view: LessonView) => {
+    setLessonUnavailable(false)
     setSelected(ids.filter((id) => availableIds.includes(id)))
     setLessonView(view)
+  }
+
+  const markUnavailable = () => {
+    setLessonUnavailable(true)
+    setSelected([])
   }
 
   const toggle = (id: string) =>
@@ -113,6 +120,7 @@ export default function App() {
             initialIndex={lessonIndex}
             onIndexChange={setLessonIndex}
             onLoadMaps={loadMaps}
+            onUnavailable={markUnavailable}
             onExit={() => setGuided(false)}
           />
         ) : (

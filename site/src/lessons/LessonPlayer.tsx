@@ -8,12 +8,13 @@ interface Props {
   unavailableIds?: string[]
   initialIndex?: number
   onLoadMaps: (ids: string[], view: LessonView) => void
+  onUnavailable?: () => void
   onExit: () => void
   onIndexChange?: (index: number) => void
 }
 
 export default function LessonPlayer({
-  lessons, unavailableIds = [], initialIndex = 0, onLoadMaps, onExit, onIndexChange,
+  lessons, unavailableIds = [], initialIndex = 0, onLoadMaps, onUnavailable, onExit, onIndexChange,
 }: Props) {
   const total = lessons.lessons.length
   const [index, setIndex] = useState(Math.min(Math.max(initialIndex, 0), Math.max(total - 1, 0)))
@@ -21,15 +22,19 @@ export default function LessonPlayer({
   const unavailable = lesson ? lesson.map_ids.some((id) => unavailableIds.includes(id)) : false
 
   const loadRef = useRef(onLoadMaps)
+  const unavRef = useRef(onUnavailable)
   const idxRef = useRef(onIndexChange)
   useEffect(() => {
     loadRef.current = onLoadMaps
     idxRef.current = onIndexChange
+    unavRef.current = onUnavailable
   })
 
   useEffect(() => {
     idxRef.current?.(index)
-    if (lesson && !unavailable) loadRef.current(lesson.map_ids, lesson.view)
+    if (!lesson) return
+    if (unavailable) unavRef.current?.()
+    else loadRef.current(lesson.map_ids, lesson.view)
   }, [index, lesson, unavailable])
 
   if (!lesson) return <p>No lessons available.</p>
